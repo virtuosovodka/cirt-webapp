@@ -1,0 +1,21 @@
+{
+  "name": "cirt-webapp",
+  "version": "1.0.0",
+  "description": "Cyber Incident Response Tracker - CS340 Project",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": ["cirt", "incident", "response", "tracker"],
+  "authors": ["Samson Tan", "Vedika Sheth"],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "hbs": "^4.2.0",
+    "mysql2": "^3.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

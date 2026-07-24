@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysts - CIRT</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">CIRT</h1>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/incidents">Incidents</a></li>
+                <li><a href="/analysts">Analysts</a></li>
+                <li><a href="/assets">Assets</a></li>
+                <li><a href="/cves">CVEs</a></li>
+                <li><a href="/severity-levels">Severity Levels</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Analysts</h2>
+            <a href="/analysts/add" class="btn btn-primary">+ Add New Analyst</a>
+        </div>
+
+        {{#if analysts}}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Hire Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each analysts}}
+                        <tr>
+                            <td>{{this.analystID}}</td>
+                            <td>{{this.firstName}}</td>
+                            <td>{{this.lastName}}</td>
+                            <td>{{this.email}}</td>
+                            <td>{{this.role}}</td>
+                            <td>{{this.hireDate}}</td>
+                            <td>
+                                <a href="/analysts/{{this.analystID}}/edit" class="btn btn-small">Edit</a>
+                                <form method="POST" action="/analysts/{{this.analystID}}/delete" style="display:inline;">
+                                    <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        {{else}}
+            <p class="empty-state">No analysts found. <a href="/analysts/add">Add one now</a></p>
+        {{/if}}
+    </div>
+
+    <footer>
+        <p>&copy; 2026 CIRT - CS340 Group 38</p>
+    </footer>
+</body>
+</html>

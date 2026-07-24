@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incidents - CIRT</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">CIRT</h1>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/incidents">Incidents</a></li>
+                <li><a href="/analysts">Analysts</a></li>
+                <li><a href="/assets">Assets</a></li>
+                <li><a href="/cves">CVEs</a></li>
+                <li><a href="/severity-levels">Severity Levels</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Incidents</h2>
+            <a href="/incidents/add" class="btn btn-primary">+ Add New Incident</a>
+        </div>
+
+        {{#if incidents}}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Reported At</th>
+                        <th>Status</th>
+                        <th>Severity</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each incidents}}
+                        <tr>
+                            <td>{{this.incidentID}}</td>
+                            <td>{{this.title}}</td>
+                            <td>{{this.description}}</td>
+                            <td>{{this.reportedAt}}</td>
+                            <td><span class="status-badge status-{{this.statusName}}">{{this.statusName}}</span></td>
+                            <td><span class="severity-badge severity-{{this.severityName}}">{{this.severityName}}</span></td>
+                            <td>
+                                <a href="/incidents/{{this.incidentID}}/edit" class="btn btn-small">Edit</a>
+                                <form method="POST" action="/incidents/{{this.incidentID}}/delete" style="display:inline;">
+                                    <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        {{else}}
+            <p class="empty-state">No incidents found. <a href="/incidents/add">Create one now</a></p>
+        {{/if}}
+    </div>
+
+    <footer>
+        <p>&copy; 2026 CIRT - CS340 Group 38</p>
+    </footer>
+</body>
+</html>

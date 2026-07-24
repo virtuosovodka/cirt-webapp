@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add CVE - CIRT</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">CIRT</h1>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/incidents">Incidents</a></li>
+                <li><a href="/analysts">Analysts</a></li>
+                <li><a href="/assets">Assets</a></li>
+                <li><a href="/cves">CVEs</a></li>
+                <li><a href="/severity-levels">Severity Levels</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Add New CVE</h2>
+        </div>
+
+        <form method="POST" action="/cves" class="form">
+            <div class="form-group">
+                <label for="cveCode">CVE Code *</label>
+                <input type="text" id="cveCode" name="cveCode" required placeholder="e.g., CVE-2026-12345">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="5" placeholder="Description of the vulnerability"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="cvssScore">CVSS Score (0.0 - 10.0)</label>
+                <input type="number" id="cvssScore" name="cvssScore" min="0" max="10" step="0.1" placeholder="e.g., 9.8">
+            </div>
+
+            <div class="form-group">
+                <label for="publishedDate">Published Date</label>
+                <input type="date" id="publishedDate" name="publishedDate">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Add CVE</button>
+                <a href="/cves" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 CIRT - CS340 Group 38</p>
+    </footer>
+</body>
+</html>

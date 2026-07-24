@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVEs - CIRT</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">CIRT</h1>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/incidents">Incidents</a></li>
+                <li><a href="/analysts">Analysts</a></li>
+                <li><a href="/assets">Assets</a></li>
+                <li><a href="/cves">CVEs</a></li>
+                <li><a href="/severity-levels">Severity Levels</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>CVEs</h2>
+            <a href="/cves/add" class="btn btn-primary">+ Add New CVE</a>
+        </div>
+
+        {{#if cves}}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>CVE Code</th>
+                        <th>Description</th>
+                        <th>CVSS Score</th>
+                        <th>Published Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each cves}}
+                        <tr>
+                            <td>{{this.cveID}}</td>
+                            <td>{{this.cveCode}}</td>
+                            <td>{{this.description}}</td>
+                            <td><span class="cvss-badge cvss-{{this.cvssScore}}">{{this.cvssScore}}</span></td>
+                            <td>{{this.publishedDate}}</td>
+                            <td>
+                                <a href="/cves/{{this.cveID}}/edit" class="btn btn-small">Edit</a>
+                                <form method="POST" action="/cves/{{this.cveID}}/delete" style="display:inline;">
+                                    <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        {{else}}
+            <p class="empty-state">No CVEs found. <a href="/cves/add">Add one now</a></p>
+        {{/if}}
+    </div>
+
+    <footer>
+        <p>&copy; 2026 CIRT - CS340 Group 38</p>
+    </footer>
+</body>
+</html>
