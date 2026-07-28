@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Severity Level - CIRT</title>
+    <title>Edit Status - CIRT</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -24,23 +24,18 @@
 
     <div class="container">
         <div class="page-header">
-            <h2>Edit Severity Level</h2>
+            <h2>Edit Status</h2>
         </div>
 
-        <form method="POST" action="/severity-levels/{{severity.severityLevelID}}" class="form">
+        <form method="POST" action="/statuses/{{status.statusID}}" class="form">
             <div class="form-group">
-                <label for="severityName">Severity Name *</label>
-                <input type="text" id="severityName" name="severityName" value="{{severity.severityName}}" required>
-            </div>
-
-            <div class="form-group">
-                <label for="responseHours">Response Hours *</label>
-                <input type="number" id="responseHours" name="responseHours" value="{{severity.responseHours}}" required min="0">
+                <label for="statusName">Status Name *</label>
+                <input type="text" id="statusName" name="statusName" value="{{status.statusName}}" required>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Update Severity Level</button>
-                <a href="/severity-levels" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Update Status</button>
+                <a href="/statuses" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>
