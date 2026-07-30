@@ -2,6 +2,9 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
+// IMPORT DATABASE CONNECTOR
+const db = require('./database/db-connector');
+
 // Set up Handlebars templating engine
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
@@ -22,53 +25,65 @@ app.get('/', (req, res) => {
 
 // Browse all incidents
 app.get('/incidents', (req, res) => {
-  // TODO: Run SELECT query from DML_Queries.sql
-  // For now, just render the template
-  res.render('incidents', { incidents: [] });
+  const query = `
+      SELECT Incidents.incidentID, Incidents.title, Incidents.description, 
+             Incidents.reportedAt, Incidents.closedAt, 
+             Severity_Levels.severityName, Statuses.statusName 
+      FROM Incidents
+      INNER JOIN Severity_Levels ON Incidents.severityLevelID = Severity_Levels.severityLevelID
+      INNER JOIN Statuses ON Incidents.statusID = Statuses.statusID;
+  `;
+  
+  db.pool.query(query, function(error, rows, fields){
+      if (error) {
+          console.log(error);
+          res.sendStatus(500);
+      } else {
+          res.render('incidents', { incidents: rows });
+      }
+  });
 });
 
 // Add incident form (GET)
 app.get('/incidents/add', (req, res) => {
-  // TODO: Get severity levels dropdown data
   res.render('add-incident', { severities: [] });
 });
 
 // Add incident (POST) - form submission
 app.post('/incidents', (req, res) => {
-  // TODO: Run INSERT query
-  // TODO: Redirect to /incidents
   res.redirect('/incidents');
 });
 
 // Edit incident form (GET)
 app.get('/incidents/:id/edit', (req, res) => {
   const incidentId = req.params.id;
-  // TODO: Run SELECT query for this incident
-  // TODO: Get severity levels dropdown data
   res.render('edit-incident', { incident: {}, severities: [] });
 });
 
 // Update incident (POST)
 app.post('/incidents/:id', (req, res) => {
   const incidentId = req.params.id;
-  // TODO: Run UPDATE query
-  // TODO: Redirect to /incidents
   res.redirect('/incidents');
 });
 
 // Delete incident
 app.post('/incidents/:id/delete', (req, res) => {
   const incidentId = req.params.id;
-  // TODO: Run DELETE query
-  // TODO: Redirect to /incidents
   res.redirect('/incidents');
 });
 
 // ANALYSTS
 
 app.get('/analysts', (req, res) => {
-  // TODO: Run SELECT query
-  res.render('analysts', { analysts: [] });
+  const query = "SELECT * FROM Analysts;";
+  db.pool.query(query, function(error, rows, fields){
+      if (error) {
+          console.log(error);
+          res.sendStatus(500);
+      } else {
+          res.render('analysts', { analysts: rows });
+      }
+  });
 });
 
 app.get('/analysts/add', (req, res) => {
@@ -76,32 +91,36 @@ app.get('/analysts/add', (req, res) => {
 });
 
 app.post('/analysts', (req, res) => {
-  // TODO: Run INSERT query
   res.redirect('/analysts');
 });
 
 app.get('/analysts/:id/edit', (req, res) => {
   const analystId = req.params.id;
-  // TODO: Run SELECT query
   res.render('edit-analyst', { analyst: {} });
 });
 
 app.post('/analysts/:id', (req, res) => {
   const analystId = req.params.id;
-  // TODO: Run UPDATE query
   res.redirect('/analysts');
 });
 
 app.post('/analysts/:id/delete', (req, res) => {
   const analystId = req.params.id;
-  // TODO: Run DELETE query
   res.redirect('/analysts');
 });
 
 // ASSETS
 
 app.get('/assets', (req, res) => {
-  res.render('assets', { assets: [] });
+  const query = "SELECT * FROM Assets;";
+  db.pool.query(query, function(error, rows, fields){
+      if (error) {
+          console.log(error);
+          res.sendStatus(500);
+      } else {
+          res.render('assets', { assets: rows });
+      }
+  });
 });
 
 app.get('/assets/add', (req, res) => {
@@ -127,10 +146,19 @@ app.post('/assets/:id/delete', (req, res) => {
   res.redirect('/assets');
 });
 
+
 // CVEs
 
 app.get('/cves', (req, res) => {
-  res.render('cves', { cves: [] });
+  const query = "SELECT * FROM CVEs;";
+  db.pool.query(query, function(error, rows, fields){
+      if (error) {
+          console.log(error);
+          res.sendStatus(500);
+      } else {
+          res.render('cves', { cves: rows });
+      }
+  });
 });
 
 app.get('/cves/add', (req, res) => {
@@ -156,10 +184,19 @@ app.post('/cves/:id/delete', (req, res) => {
   res.redirect('/cves');
 });
 
+
 // SEVERITY LEVELS
 
 app.get('/severity-levels', (req, res) => {
-  res.render('severity-levels', { severities: [] });
+  const query = "SELECT * FROM Severity_Levels;";
+  db.pool.query(query, function(error, rows, fields){
+      if (error) {
+          console.log(error);
+          res.sendStatus(500);
+      } else {
+          res.render('severity-levels', { severities: rows });
+      }
+  });
 });
 
 app.get('/severity-levels/add', (req, res) => {
@@ -185,9 +222,45 @@ app.post('/severity-levels/:id/delete', (req, res) => {
   res.redirect('/severity-levels');
 });
 
+// STATUSES
+app.get('/statuses', (req, res) => {
+  const query = "SELECT * FROM Statuses;";
+  db.pool.query(query, function(error, rows, fields){
+      if (error) {
+          console.log(error);
+          res.sendStatus(500);
+      } else {
+          res.render('statuses', { statuses: rows });
+      }
+  });
+});
+
+app.get('/statuses/add', (req, res) => {
+  res.render('add-status');
+});
+
+app.post('/statuses', (req, res) => {
+  res.redirect('/statuses');
+});
+
+app.get('/statuses/:id/edit', (req, res) => {
+  const statusId = req.params.id;
+  res.render('edit-status', { status: {} });
+});
+
+app.post('/statuses/:id', (req, res) => {
+  const statusId = req.params.id;
+  res.redirect('/statuses');
+});
+
+app.post('/statuses/:id/delete', (req, res) => {
+  const statusId = req.params.id;
+  res.redirect('/statuses');
+});
+
 // START SERVER
 
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.PORT || 9430;
 app.listen(PORT, () => {
-  console.log(`Server running on ${3005}`);
+  console.log(`Server running on port ${PORT}`);
 });

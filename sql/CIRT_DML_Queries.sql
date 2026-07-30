@@ -174,3 +174,30 @@ WHERE incidentID = @incident_id AND cveID = @cve_id;
 SELECT cveID, cveCode, cvssScore
 FROM CVEs
 ORDER BY publishedDate DESC;
+
+
+
+-- STATUSES QUERIES
+
+-- Browse / Read All: Get all statuses (for table display or dropdowns)
+SELECT statusID, statusName
+FROM Statuses
+ORDER BY statusName ASC;
+
+-- Get Single: Fetch one status for editing
+SELECT statusID, statusName
+FROM Statuses
+WHERE statusID = :status_id;
+
+-- Add: Insert a new status
+INSERT INTO Statuses (statusName)
+VALUES (:status_name_input);
+
+-- Update: Modify an existing status
+UPDATE Statuses
+SET statusName = :status_name_input
+WHERE statusID = :status_id;
+
+-- Delete: Remove a status
+DELETE FROM Statuses
+WHERE statusID = :status_id;
