@@ -12,7 +12,8 @@ app.engine('hbs', exphbs.engine({
     defaultLayout: 'layout',
     layoutsDir: path.join(__dirname, 'views/layouts'),
     helpers: {
-        eq: (a, b) => a === b
+        eq: (a, b) => a === b,
+        formatDate: (date) => date ? new Date(date).toISOString().split('T')[0] : ''
     }
 }));
 app.set('view engine', 'hbs');
@@ -151,22 +152,73 @@ app.get('/analysts/add', (req, res) => {
 });
 
 app.post('/analysts', (req, res) => {
-  res.redirect('/analysts');
+  const { firstName, lastName, email, role, hireDate } = req.body;
+  db.pool.query(
+    'CALL AddAnalyst(?, ?, ?, ?, ?)',
+    [firstName, lastName, email, role, hireDate],
+    function(error) {
+      if (error) {
+        console.log(error);
+        res.sendStatus(500);
+      } else {
+        res.redirect('/analysts');
+      }
+    }
+  );
 });
 
 app.get('/analysts/:id/edit', (req, res) => {
   const analystId = req.params.id;
-  res.render('edit-analyst', { analyst: {} });
+  db.pool.query(
+    'SELECT * FROM Analysts WHERE analystID = ?',
+    [analystId],
+    function(error, rows) {
+      if (error || rows.length === 0) {
+        console.log(error);
+        res.redirect('/analysts');
+      } else {
+        const analyst = rows[0];
+        // Format hireDate as YYYY-MM-DD for the date input field
+        if (analyst.hireDate) {
+          analyst.hireDate = new Date(analyst.hireDate).toISOString().split('T')[0];
+        }
+        res.render('edit-analyst', { analyst });
+      }
+    }
+  );
 });
 
 app.post('/analysts/:id', (req, res) => {
   const analystId = req.params.id;
-  res.redirect('/analysts');
+  const { firstName, lastName, email, role, hireDate } = req.body;
+  db.pool.query(
+    'CALL UpdateAnalyst(?, ?, ?, ?, ?, ?)',
+    [analystId, firstName, lastName, email, role, hireDate],
+    function(error) {
+      if (error) {
+        console.log(error);
+        res.sendStatus(500);
+      } else {
+        res.redirect('/analysts');
+      }
+    }
+  );
 });
 
 app.post('/analysts/:id/delete', (req, res) => {
   const analystId = req.params.id;
-  res.redirect('/analysts');
+  db.pool.query(
+    'CALL DeleteAnalyst(?)',
+    [analystId],
+    function(error) {
+      if (error) {
+        console.log(error);
+        res.sendStatus(500);
+      } else {
+        res.redirect('/analysts');
+      }
+    }
+  );
 });
 
 // ASSETS

@@ -36,7 +36,7 @@
                         <td>{{this.lastName}}</td>
                         <td>{{this.email}}</td>
                         <td>{{this.role}}</td>
-                        <td>{{this.hireDate}}</td>
+                        <td>{{formatDate this.hireDate}}</td>
                         <td>
                             <a href="/analysts/{{this.analystID}}/edit" class="btn btn-secondary btn-small">Edit</a>
                             <form method="POST" action="/analysts/{{this.analystID}}/delete" style="display:inline;">

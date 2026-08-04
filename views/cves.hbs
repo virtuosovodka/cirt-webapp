@@ -34,7 +34,7 @@
                         <td><strong>{{this.cveCode}}</strong></td>
                         <td>{{this.description}}</td>
                         <td>{{this.cvssScore}}</td>
-                        <td>{{this.publishedDate}}</td>
+                        <td>{{formatDate this.publishedDate}}</td>
                         <td>
                             <a href="/cves/{{this.cveID}}/edit" class="btn btn-secondary btn-small">Edit</a>
                             <form method="POST" action="/cves/{{this.cveID}}/delete" style="display:inline;">
