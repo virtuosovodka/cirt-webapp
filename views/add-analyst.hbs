@@ -1,73 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Analyst - CIRT</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <h1 class="logo">CIRT</h1>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/incidents">Incidents</a></li>
-                <li><a href="/analysts">Analysts</a></li>
-                <li><a href="/assets">Assets</a></li>
-                <li><a href="/cves">CVEs</a></li>
-                <li><a href="/severity-levels">Severity Levels</a></li>
-                <li><a href="/statuses">Statuses</a></li>
-            </ul>
-        </div>
-    </nav>
+<div class="page-header">
+    <h2>Add New Analyst</h2>
+</div>
 
-    <div class="container">
-        <div class="page-header">
-            <h2>Add New Analyst</h2>
-        </div>
-
-        <form method="POST" action="/analysts" class="form">
-            <div class="form-group">
-                <label for="firstName">First Name *</label>
-                <input type="text" id="firstName" name="firstName" required placeholder="e.g., Sarah">
-            </div>
-
-            <div class="form-group">
-                <label for="lastName">Last Name *</label>
-                <input type="text" id="lastName" name="lastName" required placeholder="e.g., Johnson">
-            </div>
-
-            <div class="form-group">
-                <label for="email">Email *</label>
-                <input type="email" id="email" name="email" required placeholder="e.g., sarah.johnson@company.com">
-            </div>
-
-            <div class="form-group">
-                <label for="role">Role *</label>
-                <select id="role" name="role" required>
-                    <option value="">-- Select Role --</option>
-                    <option value="Tier 1">Tier 1</option>
-                    <option value="Tier 2">Tier 2</option>
-                    <option value="Tier 3">Tier 3</option>
-                    <option value="Lead">Lead</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="hireDate">Hire Date *</label>
-                <input type="date" id="hireDate" name="hireDate" required>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Add Analyst</button>
-                <a href="/analysts" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
+<form method="POST" action="/analysts" class="form">
+    <div class="form-group">
+        <label for="firstName">First Name *</label>
+        <input type="text" id="firstName" name="firstName" placeholder="First name" required>
     </div>
 
-    <footer>
-        <p>&copy; 2026 CIRT - CS340 Group 38</p>
-    </footer>
-</body>
-</html>
+    <div class="form-group">
+        <label for="lastName">Last Name *</label>
+        <input type="text" id="lastName" name="lastName" placeholder="Last name" required>
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email *</label>
+        <input type="email" id="email" name="email" placeholder="Email address" required>
+    </div>
+
+    <div class="form-group">
+        <label for="role">Role *</label>
+        <input type="text" id="role" name="role" placeholder="e.g., Tier 1, Tier 2, Tier 3, Lead" required>
+    </div>
+
+    <div class="form-group">
+        <label for="hireDate">Hire Date *</label>
+        <input type="date" id="hireDate" name="hireDate" required>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Add Analyst</button>
+        <a href="/analysts" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

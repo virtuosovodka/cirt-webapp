@@ -1,70 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CVEs - CIRT</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <h1 class="logo">CIRT</h1>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/incidents">Incidents</a></li>
-                <li><a href="/analysts">Analysts</a></li>
-                <li><a href="/assets">Assets</a></li>
-                <li><a href="/cves">CVEs</a></li>
-                <li><a href="/severity-levels">Severity Levels</a></li>
-                <li><a href="/statuses">Statuses</a></li>
-            </ul>
-        </div>
-    </nav>
+<div class="page-header">
+    <h2>CVEs (Common Vulnerabilities and Exposures)</h2>
+    <a href="/cves/add" class="btn btn-primary">+ Add New CVE</a>
+</div>
 
-    <div class="container">
-        <div class="page-header">
-            <h2>CVEs</h2>
-            <a href="/cves/add" class="btn btn-primary">+ Add New CVE</a>
-        </div>
-
-        {{#if cves}}
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>CVE Code</th>
-                        <th>Description</th>
-                        <th>CVSS Score</th>
-                        <th>Published Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each cves}}
-                        <tr>
-                            <td>{{this.cveID}}</td>
-                            <td>{{this.cveCode}}</td>
-                            <td>{{this.description}}</td>
-                            <td><span class="cvss-badge cvss-{{this.cvssScore}}">{{this.cvssScore}}</span></td>
-                            <td>{{this.publishedDate}}</td>
-                            <td>
-                                <a href="/cves/{{this.cveID}}/edit" class="btn btn-small">Edit</a>
-                                <form method="POST" action="/cves/{{this.cveID}}/delete" style="display:inline;">
-                                    <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-        {{else}}
-            <p class="empty-state">No CVEs found. <a href="/cves/add">Add one now</a></p>
-        {{/if}}
+<div class="entity-description">
+    <h3>What are CVEs?</h3>
+    <p>
+        CVEs are publicly known security vulnerabilities in software and hardware that could affect your organization. Each CVE has a unique identifier (CVE-YEAR-NUMBER), a CVSS score indicating severity, and a description. Your SOC team tracks which CVEs are relevant to your environment and which incidents involve specific vulnerabilities.
+    </p>
+    <div class="description-meta">
+        <span><strong>CVSS Range:</strong> 0.0 to 10.0 (higher = more severe)</span>
+        <span><strong>Tracks:</strong> CVE code, description, CVSS score, published date</span>
     </div>
+</div>
 
-    <footer>
-        <p>&copy; 2026 CIRT - CS340 Group 38</p>
-    </footer>
-</body>
-</html>
+<div class="crud-section">
+    {{#if cves}}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>CVE Code</th>
+                    <th>Description</th>
+                    <th>CVSS Score</th>
+                    <th>Published Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each cves}}
+                    <tr>
+                        <td>{{this.cveID}}</td>
+                        <td><strong>{{this.cveCode}}</strong></td>
+                        <td>{{this.description}}</td>
+                        <td>{{this.cvssScore}}</td>
+                        <td>{{this.publishedDate}}</td>
+                        <td>
+                            <a href="/cves/{{this.cveID}}/edit" class="btn btn-secondary btn-small">Edit</a>
+                            <form method="POST" action="/cves/{{this.cveID}}/delete" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Are you sure?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{else}}
+        <p class="empty-state">No CVEs found. <a href="/cves/add">Add one now</a></p>
+    {{/if}}
+</div>

@@ -1,64 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIRT - Cyber Incident Response Tracker</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <h1 class="logo">CIRT</h1>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/incidents">Incidents</a></li>
-                <li><a href="/analysts">Analysts</a></li>
-                <li><a href="/assets">Assets</a></li>
-                <li><a href="/cves">CVEs</a></li>
-                <li><a href="/severity-levels">Severity Levels</a></li>
-                <li><a href="/statuses">Statuses</a></li>
-            </ul>
+<section class="hero">
+    <h1>Cyber Incident Response Tracker</h1>
+    <p>A database-driven platform for SOC teams to efficiently track, analyze, and respond to security incidents</p>
+    <div class="hero-stats">
+        <div class="stat">
+            <h3>48,244</h3>
+            <p>CVEs published in 2025</p>
         </div>
-    </nav>
-
-    <div class="container">
-        <div class="hero">
-            <h2>Cyber Incident Response Tracker</h2>
-            <p>Manage and track security incidents, assets, analysts, and CVEs in one place.</p>
+        <div class="stat">
+            <h3>20.3%</h3>
+            <p>Increase from 2024</p>
         </div>
-
-        <div class="cards">
-            <div class="card">
-                <h3>Incidents</h3>
-                <p>Track and manage security incidents</p>
-                <a href="/incidents" class="btn">View Incidents</a>
-            </div>
-            <div class="card">
-                <h3>Analysts</h3>
-                <p>Manage SOC team members</p>
-                <a href="/analysts" class="btn">View Analysts</a>
-            </div>
-            <div class="card">
-                <h3>Assets</h3>
-                <p>Monitor your network devices</p>
-                <a href="/assets" class="btn">View Assets</a>
-            </div>
-            <div class="card">
-                <h3>CVEs</h3>
-                <p>Track vulnerabilities</p>
-                <a href="/cves" class="btn">View CVEs</a>
-            </div>
-            <div class="card">
-                <h3>Severity Levels</h3>
-                <p>Manage incident severity tiers</p>
-                <a href="/severity-levels" class="btn">View Severity Levels</a>
-            </div>
+        <div class="stat">
+            <h3>26.3%</h3>
+            <p>Q1 2026 growth rate</p>
         </div>
     </div>
+</section>
 
-    <footer>
-        <p>&copy; 2026 CIRT - CS340 Group 38</p>
-    </footer>
-</body>
-</html>
+<section class="container">
+    <div class="overview">
+        <h2>Why CIRT?</h2>
+        <p>
+            Security Operations Centers face a rapidly evolving vulnerability landscape. Many SOC teams still rely on spreadsheets and email threads to track incidents, making it difficult to identify patterns and respond efficiently. CIRT brings your incident data into one unified database, letting you query critical information in seconds instead of hours.
+        </p>
+    </div>
+
+    <h2 style="text-align: center; margin: 3rem 0 2rem 0;">Manage Your Security Operations</h2>
+    <div class="entity-cards">
+        <div class="entity-card">
+            <div class="card-icon">🚨</div>
+            <h3>Incidents</h3>
+            <p>Track security incidents detected or reported, from initial report through resolution</p>
+            <a href="/incidents" class="btn btn-primary">Manage Incidents</a>
+        </div>
+
+        <div class="entity-card">
+            <div class="card-icon">👤</div>
+            <h3>Analysts</h3>
+            <p>Manage your SOC team members and assign them to incident investigations</p>
+            <a href="/analysts" class="btn btn-primary">Manage Analysts</a>
+        </div>
+
+        <div class="entity-card">
+            <div class="card-icon">💻</div>
+            <h3>Assets</h3>
+            <p>Monitor systems, servers, workstations, and network devices across your organization</p>
+            <a href="/assets" class="btn btn-primary">Manage Assets</a>
+        </div>
+
+        <div class="entity-card">
+            <div class="card-icon">⚠️</div>
+            <h3>CVEs</h3>
+            <p>Track publicly known vulnerabilities relevant to your security operations</p>
+            <a href="/cves" class="btn btn-primary">Manage CVEs</a>
+        </div>
+
+        <div class="entity-card">
+            <div class="card-icon">📊</div>
+            <h3>Severity Levels</h3>
+            <p>Define and manage incident severity tiers and response time expectations</p>
+            <a href="/severity-levels" class="btn btn-primary">Manage Severity</a>
+        </div>
+    </div>
+</section>

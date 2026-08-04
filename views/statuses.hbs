@@ -1,60 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statuses - CIRT</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <h1 class="logo">CIRT</h1>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/incidents">Incidents</a></li>
-                <li><a href="/analysts">Analysts</a></li>
-                <li><a href="/assets">Assets</a></li>
-                <li><a href="/cves">CVEs</a></li>
-                <li><a href="/severity-levels">Severity Levels</a></li>
-                <li><a href="/statuses">Statuses</a></li>
-            </ul>
-        </div>
-    </nav>
+<div class="page-header">
+    <h2>Statuses</h2>
+    <a href="/statuses/add" class="btn btn-primary">+ Add New Status</a>
+</div>
 
-    <div class="container">
-        <div class="page-header">
-            <h2>Incident Statuses</h2>
-            <a href="/add-status" class="btn btn-primary">+ Add New Status</a>
-        </div>
+<div class="entity-description">
+    <h3>What are Statuses?</h3>
+    <p>
+        Statuses represent the current state of an incident throughout its lifecycle. Each status reflects where an incident stands in the investigation and response process. Standard statuses include Open (newly reported), Investigating (actively being worked on), and Closed (resolved or concluded).
+    </p>
+    <div class="description-meta">
+        <span><strong>Standard Statuses:</strong> Open, Investigating, Closed</span>
+        <span><strong>Purpose:</strong> Track incident workflow and prioritize investigation efforts</span>
+    </div>
+</div>
 
+<div class="crud-section">
+    {{#if statuses}}
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>Status ID</th>
+                    <th>ID</th>
                     <th>Status Name</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {{#each statuses}}
-                <tr>
-                    <td>{{this.statusID}}</td>
-                    <td>{{this.statusName}}</td>
-                    <td class="actions">
-                        <a href="/edit-status/{{this.statusID}}" class="btn btn-sm btn-secondary">Edit</a>
-                        <form action="/delete-status/{{this.statusID}}" method="POST" style="display:inline;">
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this status?')">Delete</button>
-                        </form>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>{{this.statusID}}</td>
+                        <td><span class="status-badge status-{{this.statusName}}">{{this.statusName}}</span></td>
+                        <td>
+                            <a href="/statuses/{{this.statusID}}/edit" class="btn btn-secondary btn-small">Edit</a>
+                            <form method="POST" action="/statuses/{{this.statusID}}/delete" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Are you sure?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
                 {{/each}}
             </tbody>
         </table>
-    </div>
-
-    <footer>
-        <p>&copy; 2026 CIRT - CS340 Group 38</p>
-    </footer>
-</body>
-</html>
+    {{else}}
+        <p class="empty-state">No statuses found. <a href="/statuses/add">Add one now</a></p>
+    {{/if}}
+</div>

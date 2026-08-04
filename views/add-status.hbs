@@ -1,47 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Status - CIRT</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <h1 class="logo">CIRT</h1>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/incidents">Incidents</a></li>
-                <li><a href="/analysts">Analysts</a></li>
-                <li><a href="/assets">Assets</a></li>
-                <li><a href="/cves">CVEs</a></li>
-                <li><a href="/severity-levels">Severity Levels</a></li>
-                <li><a href="/statuses">Statuses</a></li>
-            </ul>
-        </div>
-    </nav>
+<div class="page-header">
+    <h2>Add New Status</h2>
+</div>
 
-    <div class="container">
-        <div class="page-header">
-            <h2>Add New Status</h2>
-        </div>
-
-        <form method="POST" action="/add-status" class="form">
-            <div class="form-group">
-                <label for="statusName">Status Name *</label>
-                <input type="text" id="statusName" name="statusName" requiredPlaceholder="e.g., Pending Review" required>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Add Status</button>
-                <a href="/statuses" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
+<form method="POST" action="/statuses" class="form">
+    <div class="form-group">
+        <label for="statusName">Status Name *</label>
+        <input type="text" id="statusName" name="statusName" placeholder="e.g., Open, Investigating, Closed" required>
     </div>
 
-    <footer>
-        <p>&copy; 2026 CIRT - CS340 Group 38</p>
-    </footer>
-</body>
-</html>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Add Status</button>
+        <a href="/statuses" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

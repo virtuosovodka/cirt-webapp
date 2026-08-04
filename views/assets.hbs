@@ -1,70 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assets - CIRT</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <h1 class="logo">CIRT</h1>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/incidents">Incidents</a></li>
-                <li><a href="/analysts">Analysts</a></li>
-                <li><a href="/assets">Assets</a></li>
-                <li><a href="/cves">CVEs</a></li>
-                <li><a href="/severity-levels">Severity Levels</a></li>
-                <li><a href="/statuses">Statuses</a></li>
-            </ul>
-        </div>
-    </nav>
+<div class="page-header">
+    <h2>Assets</h2>
+    <a href="/assets/add" class="btn btn-primary">+ Add New Asset</a>
+</div>
 
-    <div class="container">
-        <div class="page-header">
-            <h2>Assets</h2>
-            <a href="/assets/add" class="btn btn-primary">+ Add New Asset</a>
-        </div>
-
-        {{#if assets}}
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>IP Address</th>
-                        <th>Department</th>
-                        <th>Type</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each assets}}
-                        <tr>
-                            <td>{{this.assetID}}</td>
-                            <td>{{this.name}}</td>
-                            <td>{{this.ipAddress}}</td>
-                            <td>{{this.department}}</td>
-                            <td>{{this.type}}</td>
-                            <td>
-                                <a href="/assets/{{this.assetID}}/edit" class="btn btn-small">Edit</a>
-                                <form method="POST" action="/assets/{{this.assetID}}/delete" style="display:inline;">
-                                    <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-        {{else}}
-            <p class="empty-state">No assets found. <a href="/assets/add">Add one now</a></p>
-        {{/if}}
+<div class="entity-description">
+    <h3>What are Assets?</h3>
+    <p>
+        Assets are the systems, servers, workstations, and network devices that your organization monitors for security threats. Each asset has an asset type (such as Server, Workstation, Router, or Firewall) and belongs to a specific department. Incidents can affect one or multiple assets, and tracking which assets are involved helps prioritize response efforts.
+    </p>
+    <div class="description-meta">
+        <span><strong>Types:</strong> Server, Workstation, Router, Firewall</span>
+        <span><strong>Tracks:</strong> Name, IP address, department, device type</span>
     </div>
+</div>
 
-    <footer>
-        <p>&copy; 2026 CIRT - CS340 Group 38</p>
-    </footer>
-</body>
-</html>
+<div class="crud-section">
+    {{#if assets}}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>IP Address</th>
+                    <th>Department</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each assets}}
+                    <tr>
+                        <td>{{this.assetID}}</td>
+                        <td>{{this.name}}</td>
+                        <td>{{this.ipAddress}}</td>
+                        <td>{{this.department}}</td>
+                        <td>{{this.type}}</td>
+                        <td>
+                            <a href="/assets/{{this.assetID}}/edit" class="btn btn-secondary btn-small">Edit</a>
+                            <form method="POST" action="/assets/{{this.assetID}}/delete" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Are you sure?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{else}}
+        <p class="empty-state">No assets found. <a href="/assets/add">Add one now</a></p>
+    {{/if}}
+</div>

@@ -1,70 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Asset - CIRT</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <h1 class="logo">CIRT</h1>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/incidents">Incidents</a></li>
-                <li><a href="/analysts">Analysts</a></li>
-                <li><a href="/assets">Assets</a></li>
-                <li><a href="/cves">CVEs</a></li>
-                <li><a href="/severity-levels">Severity Levels</a></li>
-                <li><a href="/statuses">Statuses</a></li>
-            </ul>
-        </div>
-    </nav>
+<div class="page-header">
+    <h2>Edit Asset</h2>
+</div>
 
-    <div class="container">
-        <div class="page-header">
-            <h2>Edit Asset</h2>
-        </div>
-
-        <form method="POST" action="/assets/{{asset.assetID}}" class="form">
-            <div class="form-group">
-                <label for="name">Asset Name *</label>
-                <input type="text" id="name" name="name" value="{{asset.name}}" required>
-            </div>
-
-            <div class="form-group">
-                <label for="ipAddress">IP Address</label>
-                <input type="text" id="ipAddress" name="ipAddress" value="{{asset.ipAddress}}">
-            </div>
-
-            <div class="form-group">
-                <label for="department">Department</label>
-                <input type="text" id="department" name="department" value="{{asset.department}}">
-            </div>
-
-            <div class="form-group">
-                <label for="type">Type *</label>
-                <select id="type" name="type" required>
-                    <option value="">-- Select Type --</option>
-                    <option value="Server" {{#if (eq asset.type "Server")}}selected{{/if}}>Server</option>
-                    <option value="Workstation" {{#if (eq asset.type "Workstation")}}selected{{/if}}>Workstation</option>
-                    <option value="Router" {{#if (eq asset.type "Router")}}selected{{/if}}>Router</option>
-                    <option value="Firewall" {{#if (eq asset.type "Firewall")}}selected{{/if}}>Firewall</option>
-                    <option value="Switch" {{#if (eq asset.type "Switch")}}selected{{/if}}>Switch</option>
-                    <option value="Other" {{#if (eq asset.type "Other")}}selected{{/if}}>Other</option>
-                </select>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Update Asset</button>
-                <a href="/assets" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
+<form method="POST" action="/assets/{{asset.assetID}}" class="form">
+    <div class="form-group">
+        <label for="name">Asset Name *</label>
+        <input type="text" id="name" name="name" value="{{asset.name}}" required>
     </div>
 
-    <footer>
-        <p>&copy; 2026 CIRT - CS340 Group 38</p>
-    </footer>
-</body>
-</html>
+    <div class="form-group">
+        <label for="ipAddress">IP Address</label>
+        <input type="text" id="ipAddress" name="ipAddress" value="{{asset.ipAddress}}">
+    </div>
+
+    <div class="form-group">
+        <label for="department">Department</label>
+        <input type="text" id="department" name="department" value="{{asset.department}}">
+    </div>
+
+    <div class="form-group">
+        <label for="type">Asset Type *</label>
+        <input type="text" id="type" name="type" value="{{asset.type}}" required>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Update Asset</button>
+        <a href="/assets" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

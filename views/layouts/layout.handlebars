@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - CIRT</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>CIRT</h2>
+            <p class="sidebar-subtitle">Cyber Incident Response</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/" class="nav-item {{#if isHome}}active{{/if}}">
+                <span class="nav-icon">🏠</span>
+                Dashboard
+            </a>
+            <div class="nav-section">
+                <h4>Core Tables</h4>
+                <a href="/incidents" class="nav-item {{#if isIncidents}}active{{/if}}">
+                    <span class="nav-icon">🚨</span>
+                    Incidents
+                </a>
+                <a href="/analysts" class="nav-item {{#if isAnalysts}}active{{/if}}">
+                    <span class="nav-icon">👤</span>
+                    Analysts
+                </a>
+                <a href="/assets" class="nav-item {{#if isAssets}}active{{/if}}">
+                    <span class="nav-icon">💻</span>
+                    Assets
+                </a>
+                <a href="/cves" class="nav-item {{#if isCVEs}}active{{/if}}">
+                    <span class="nav-icon">⚠️</span>
+                    CVEs
+                </a>
+                <a href="/severity-levels" class="nav-item {{#if isSeverityLevels}}active{{/if}}">
+                    <span class="nav-icon">📊</span>
+                    Severity Levels
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">CIRT Database</div>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/incidents">Incidents</a></li>
+                    <li><a href="/analysts">Analysts</a></li>
+                    <li><a href="/assets">Assets</a></li>
+                    <li><a href="/cves">CVEs</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container">
+            {{{body}}}
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Cyber Incident Response Tracker. Group 38: Samson Tan, Vedika Sheth</p>
+        </footer>
+    </div>
+</body>
+</html>

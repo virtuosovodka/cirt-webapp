@@ -6,6 +6,15 @@ const app = express();
 const db = require('./database/db-connector');
 
 // Set up Handlebars templating engine
+const exphbs = require('express-handlebars');
+
+app.engine('hbs', exphbs.engine({ 
+    defaultLayout: 'layout',
+    layoutsDir: path.join(__dirname, 'views/layouts'),
+    helpers: {
+        eq: (a, b) => a === b
+    }
+}));
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -14,11 +23,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ROUTES
-
 // Home page
 app.get('/', (req, res) => {
-  res.render('index');
+  res.render('index', {
+    isHome: true,
+    title: 'Dashboard'
+  });
 });
 
 // INCIDENTS
@@ -39,14 +49,35 @@ app.get('/incidents', (req, res) => {
           console.log(error);
           res.sendStatus(500);
       } else {
-          res.render('incidents', { incidents: rows });
+          res.render('incidents', { 
+            incidents: rows,
+            isIncidents: true,
+            title: 'Incidents'
+          });
       }
   });
 });
 
 // Add incident form (GET)
 app.get('/incidents/add', (req, res) => {
-  res.render('add-incident', { severities: [] });
+  const severityQuery = "SELECT * FROM Severity_Levels ORDER BY responseHours ASC;";
+  const statusQuery = "SELECT * FROM Statuses ORDER BY statusName ASC;";
+  
+  db.pool.query(severityQuery, function(error, severities, fields){
+      if (error) {
+          console.log(error);
+          res.render('add-incident', { severities: [], statuses: [] });
+      } else {
+          db.pool.query(statusQuery, function(error, statuses, fields){
+              if (error) {
+                  console.log(error);
+                  res.render('add-incident', { severities: severities, statuses: [] });
+              } else {
+                  res.render('add-incident', { severities: severities, statuses: statuses });
+              }
+          });
+      }
+  });
 });
 
 // Add incident (POST) - form submission
@@ -57,7 +88,32 @@ app.post('/incidents', (req, res) => {
 // Edit incident form (GET)
 app.get('/incidents/:id/edit', (req, res) => {
   const incidentId = req.params.id;
-  res.render('edit-incident', { incident: {}, severities: [] });
+  const incidentQuery = "SELECT * FROM Incidents WHERE incidentID = ?;";
+  const severityQuery = "SELECT * FROM Severity_Levels ORDER BY responseHours ASC;";
+  const statusQuery = "SELECT * FROM Statuses ORDER BY statusName ASC;";
+  
+  db.pool.query(incidentQuery, [incidentId], function(error, incident, fields){
+      if (error) {
+          console.log(error);
+          res.render('edit-incident', { incident: {}, severities: [], statuses: [] });
+      } else {
+          db.pool.query(severityQuery, function(error, severities, fields){
+              if (error) {
+                  console.log(error);
+                  res.render('edit-incident', { incident: incident[0], severities: [], statuses: [] });
+              } else {
+                  db.pool.query(statusQuery, function(error, statuses, fields){
+                      if (error) {
+                          console.log(error);
+                          res.render('edit-incident', { incident: incident[0], severities: severities, statuses: [] });
+                      } else {
+                          res.render('edit-incident', { incident: incident[0], severities: severities, statuses: statuses });
+                      }
+                  });
+              }
+          });
+      }
+  });
 });
 
 // Update incident (POST)
@@ -81,7 +137,11 @@ app.get('/analysts', (req, res) => {
           console.log(error);
           res.sendStatus(500);
       } else {
-          res.render('analysts', { analysts: rows });
+          res.render('analysts', { 
+            analysts: rows,
+            isAnalysts: true,
+            title: 'Analysts'
+          });
       }
   });
 });
@@ -118,7 +178,11 @@ app.get('/assets', (req, res) => {
           console.log(error);
           res.sendStatus(500);
       } else {
-          res.render('assets', { assets: rows });
+          res.render('assets', { 
+            assets: rows,
+            isAssets: true,
+            title: 'Assets'
+          });
       }
   });
 });
@@ -146,7 +210,6 @@ app.post('/assets/:id/delete', (req, res) => {
   res.redirect('/assets');
 });
 
-
 // CVEs
 
 app.get('/cves', (req, res) => {
@@ -156,7 +219,11 @@ app.get('/cves', (req, res) => {
           console.log(error);
           res.sendStatus(500);
       } else {
-          res.render('cves', { cves: rows });
+          res.render('cves', { 
+            cves: rows,
+            isCVEs: true,
+            title: 'CVEs'
+          });
       }
   });
 });
@@ -184,7 +251,6 @@ app.post('/cves/:id/delete', (req, res) => {
   res.redirect('/cves');
 });
 
-
 // SEVERITY LEVELS
 
 app.get('/severity-levels', (req, res) => {
@@ -194,7 +260,11 @@ app.get('/severity-levels', (req, res) => {
           console.log(error);
           res.sendStatus(500);
       } else {
-          res.render('severity-levels', { severities: rows });
+          res.render('severity-levels', { 
+            severities: rows,
+            isSeverityLevels: true,
+            title: 'Severity Levels'
+          });
       }
   });
 });
@@ -230,7 +300,10 @@ app.get('/statuses', (req, res) => {
           console.log(error);
           res.sendStatus(500);
       } else {
-          res.render('statuses', { statuses: rows });
+          res.render('statuses', { 
+            statuses: rows,
+            title: 'Statuses'
+          });
       }
   });
 });

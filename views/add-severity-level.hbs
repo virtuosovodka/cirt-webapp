@@ -1,66 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Severity Levels - CIRT</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <h1 class="logo">CIRT</h1>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/incidents">Incidents</a></li>
-                <li><a href="/analysts">Analysts</a></li>
-                <li><a href="/assets">Assets</a></li>
-                <li><a href="/cves">CVEs</a></li>
-                <li><a href="/severity-levels">Severity Levels</a></li>
-                <li><a href="/statuses">Statuses</a></li>
-            </ul>
-        </div>
-    </nav>
+<div class="page-header">
+    <h2>Add New Severity Level</h2>
+</div>
 
-    <div class="container">
-        <div class="page-header">
-            <h2>Severity Levels</h2>
-            <a href="/severity-levels/add" class="btn btn-primary">+ Add New Severity Level</a>
-        </div>
-
-        {{#if severities}}
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Severity Name</th>
-                        <th>Response Hours</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each severities}}
-                        <tr>
-                            <td>{{this.severityLevelID}}</td>
-                            <td><span class="severity-badge severity-{{this.severityName}}">{{this.severityName}}</span></td>
-                            <td>{{this.responseHours}}</td>
-                            <td>
-                                <a href="/severity-levels/{{this.severityLevelID}}/edit" class="btn btn-small">Edit</a>
-                                <form method="POST" action="/severity-levels/{{this.severityLevelID}}/delete" style="display:inline;">
-                                    <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-        {{else}}
-            <p class="empty-state">No severity levels found. <a href="/severity-levels/add">Add one now</a></p>
-        {{/if}}
+<form method="POST" action="/severity-levels" class="form">
+    <div class="form-group">
+        <label for="severityName">Severity Name *</label>
+        <input type="text" id="severityName" name="severityName" placeholder="e.g., Low, Medium, High, Critical, Info" required>
     </div>
 
-    <footer>
-        <p>&copy; 2026 CIRT - CS340 Group 38</p>
-    </footer>
-</body>
-</html>
+    <div class="form-group">
+        <label for="responseHours">Response Hours *</label>
+        <input type="number" id="responseHours" name="responseHours" placeholder="e.g., 8" required>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Add Severity Level</button>
+        <a href="/severity-levels" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

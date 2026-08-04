@@ -1,82 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Incident - CIRT</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <h1 class="logo">CIRT</h1>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/incidents">Incidents</a></li>
-                <li><a href="/analysts">Analysts</a></li>
-                <li><a href="/assets">Assets</a></li>
-                <li><a href="/cves">CVEs</a></li>
-                <li><a href="/severity-levels">Severity Levels</a></li>
-                <li><a href="/statuses">Statuses</a></li>
-            </ul>
-        </div>
-    </nav>
+<div class="page-header">
+    <h2>Edit Incident</h2>
+</div>
 
-    <div class="container">
-        <div class="page-header">
-            <h2>Edit Incident</h2>
-        </div>
-
-        <form method="POST" action="/incidents/{{incident.incidentID}}" class="form">
-            <div class="form-group">
-                <label for="title">Title *</label>
-                <input type="text" id="title" name="title" value="{{incident.title}}" required>
-            </div>
-
-            <div class="form-group">
-                <label for="description">Description</label>
-                <textarea id="description" name="description" rows="5">{{incident.description}}</textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="reportedAt">Reported At *</label>
-                <input type="datetime-local" id="reportedAt" name="reportedAt" value="{{incident.reportedAt}}" required>
-            </div>
-
-            <div class="form-group">
-                <label for="severityLevelID">Severity Level *</label>
-                <select id="severityLevelID" name="severityLevelID" required>
-                    <option value="">-- Select Severity --</option>
-                    {{#each severities}}
-                        <option value="{{this.severityLevelID}}" {{#if (eq this.severityLevelID incident.severityLevelID)}}selected{{/if}}>{{this.severityName}}</option>
-                    {{/each}}
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="statusName">Status *</label>
-                <select id="statusName" name="statusName" required>
-                    <option value="">-- Select Status --</option>
-                    <option value="Open" {{#if (eq incident.statusName "Open")}}selected{{/if}}>Open</option>
-                    <option value="Investigating" {{#if (eq incident.statusName "Investigating")}}selected{{/if}}>Investigating</option>
-                    <option value="Closed" {{#if (eq incident.statusName "Closed")}}selected{{/if}}>Closed</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="closedAt">Closed At</label>
-                <input type="datetime-local" id="closedAt" name="closedAt" value="{{incident.closedAt}}">
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Update Incident</button>
-                <a href="/incidents" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
+<form method="POST" action="/incidents/{{incident.incidentID}}" class="form">
+    <div class="form-group">
+        <label for="title">Title *</label>
+        <input type="text" id="title" name="title" value="{{incident.title}}" required>
     </div>
 
-    <footer>
-        <p>&copy; 2026 CIRT - CS340 Group 38</p>
-    </footer>
-</body>
-</html>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="5">{{incident.description}}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="reportedAt">Reported At *</label>
+        <input type="datetime-local" id="reportedAt" name="reportedAt" value="{{incident.reportedAt}}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="severityLevelID">Severity Level *</label>
+        <select id="severityLevelID" name="severityLevelID" required>
+            <option value="">-- Select Severity --</option>
+            {{#each severities}}
+                <option value="{{this.severityLevelID}}" {{#if (eq this.severityLevelID incident.severityLevelID)}}selected{{/if}}>{{this.severityName}}</option>
+            {{/each}}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="statusID">Status *</label>
+        <select id="statusID" name="statusID" required>
+            <option value="">-- Select Status --</option>
+            {{#each statuses}}
+                <option value="{{this.statusID}}" {{#if (eq this.statusID incident.statusID)}}selected{{/if}}>{{this.statusName}}</option>
+            {{/each}}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="closedAt">Closed At</label>
+        <input type="datetime-local" id="closedAt" name="closedAt" value="{{incident.closedAt}}">
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Update Incident</button>
+        <a href="/incidents" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
