@@ -10,7 +10,7 @@
     </p>
     <div class="description-meta">
         <span><strong>Status:</strong> Open, Investigating, Closed</span>
-        <span><strong>Key info:</strong> Title, description, reported date, assigned analysts, related assets and CVEs</span>
+        <span><strong>Key info:</strong> Click a row to expand and see details</span>
     </div>
 </div>
 
@@ -20,11 +20,11 @@
         <table class="data-table">
             <thead>
                 <tr>
+                    <th></th>
                     <th>ID</th>
                     <th>Title</th>
                     <th>Description</th>
                     <th>Reported At</th>
-                    <th>Closed At</th>
                     <th>Status</th>
                     <th>Severity</th>
                     <th class="action-cell">Actions</th>
@@ -32,12 +32,12 @@
             </thead>
             <tbody>
                 {{#each incidents}}
-                    <tr>
+                    <tr class="incident-row" data-incident-id="{{this.incidentID}}" onclick="toggleIncidentDetails(this)">
+                        <td><span class="expand-icon">▼</span></td>
                         <td>{{this.incidentID}}</td>
                         <td><strong>{{this.title}}</strong></td>
                         <td>{{this.description}}</td>
                         <td>{{this.reportedAt}}</td>
-                        <td>{{this.closedAt}}</td>
                         <td><span class="status-badge status-{{this.statusName}}">{{this.statusName}}</span></td>
                         <td><span class="severity-badge severity-{{this.severityName}}">{{this.severityName}}</span></td>
                         <td class="action-cell">
@@ -47,134 +47,133 @@
                             </form>
                         </td>
                     </tr>
+                    <tr class="incident-details" id="details-{{this.incidentID}}">
+                        <td colspan="8">
+                            <div class="details-cell">
+                                <!-- ASSIGNED ANALYSTS -->
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <h4>Assigned Analysts</h4>
+                                        <a href="/incidents/{{this.incidentID}}/manage-analysts" class="btn btn-secondary btn-small">Manage Analysts</a>
+                                    </div>
+                                    <table class="details-section-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Role</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#if this.analysts}}
+                                                {{#each this.analysts}}
+                                                    <tr>
+                                                        <td><strong>{{this.firstName}} {{this.lastName}}</strong></td>
+                                                        <td>{{this.email}}</td>
+                                                        <td><span class="status-badge status-{{this.role}}">{{this.role}}</span></td>
+                                                        <td>
+                                                            <a href="/incidents/{{../this.incidentID}}/manage-analysts" class="btn btn-secondary btn-small">Manage</a>
+                                                        </td>
+                                                    </tr>
+                                                {{/each}}
+                                            {{else}}
+                                                <tr>
+                                                    <td colspan="4" class="empty-detail">No analysts assigned</td>
+                                                </tr>
+                                            {{/if}}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- AFFECTED ASSETS -->
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <h4>Affected Assets</h4>
+                                        <a href="/incidents/{{this.incidentID}}/manage-assets" class="btn btn-secondary btn-small">Manage Assets</a>
+                                    </div>
+                                    <table class="details-section-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>IP Address</th>
+                                                <th>Department</th>
+                                                <th>Type</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#if this.assets}}
+                                                {{#each this.assets}}
+                                                    <tr>
+                                                        <td><strong>{{this.name}}</strong></td>
+                                                        <td>{{this.ipAddress}}</td>
+                                                        <td>{{this.department}}</td>
+                                                        <td><span class="status-badge">{{this.type}}</span></td>
+                                                        <td>
+                                                            <a href="/incidents/{{../this.incidentID}}/manage-assets" class="btn btn-secondary btn-small">Manage</a>
+                                                        </td>
+                                                    </tr>
+                                                {{/each}}
+                                            {{else}}
+                                                <tr>
+                                                    <td colspan="5" class="empty-detail">No assets involved</td>
+                                                </tr>
+                                            {{/if}}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- LINKED CVES -->
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <h4>Linked CVEs</h4>
+                                        <a href="/incidents/{{this.incidentID}}/manage-cves" class="btn btn-secondary btn-small">Manage CVEs</a>
+                                    </div>
+                                    <table class="details-section-table">
+                                        <thead>
+                                            <tr>
+                                                <th>CVE Code</th>
+                                                <th>Description</th>
+                                                <th>CVSS Score</th>
+                                                <th>Published Date</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#if this.cves}}
+                                                {{#each this.cves}}
+                                                    <tr>
+                                                        <td><strong>{{this.cveCode}}</strong></td>
+                                                        <td>{{this.description}}</td>
+                                                        <td>{{this.cvssScore}}</td>
+                                                        <td>{{formatDate this.publishedDate}}</td>
+                                                        <td>
+                                                            <a href="/incidents/{{../this.incidentID}}/manage-cves" class="btn btn-secondary btn-small">Manage</a>
+                                                        </td>
+                                                    </tr>
+                                                {{/each}}
+                                            {{else}}
+                                                <tr>
+                                                    <td colspan="5" class="empty-detail">No CVEs linked</td>
+                                                </tr>
+                                            {{/if}}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- CLOSED AT -->
+                                <div>
+                                    <h4>Closed At</h4>
+                                    <p>{{#if this.closedAt}}{{this.closedAt}}{{else}}<em>Not yet closed</em>{{/if}}</p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
                 {{/each}}
             </tbody>
         </table>
     {{else}}
         <p class="empty-state">No incidents found. <a href="/incidents/add">Create one now</a></p>
-    {{/if}}
-</div>
-
-<div class="crud-section">
-    <h3>Incident_Analysts (M:N Relationship)</h3>
-    {{#if incidents}}
-        {{#each incidents}}
-            {{#if this.analysts}}
-                <div class="incident-info">
-                    <div class="incident-info-left">
-                        <h4>Incident {{this.incidentID}}: {{this.title}}</h4>
-                    </div>
-                    <div class="relation-status">
-                        <strong>{{this.analysts.length}}</strong> analyst(s) assigned
-                    </div>
-                </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th class="action-cell">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#each this.analysts}}
-                            <tr>
-                                <td><strong>{{this.firstName}} {{this.lastName}}</strong></td>
-                                <td>{{this.email}}</td>
-                                <td><span class="status-badge status-{{this.role}}">{{this.role}}</span></td>
-                                <td class="action-cell">
-                                    <a href="/incidents/{{../this.incidentID}}/manage-analysts" class="btn btn-secondary btn-small">Manage</a>
-                                </td>
-                            </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-            {{/if}}
-        {{/each}}
-    {{/if}}
-</div>
-
-<div class="crud-section">
-    <h3>Incident_Assets (M:N Relationship)</h3>
-    {{#if incidents}}
-        {{#each incidents}}
-            {{#if this.assets}}
-                <div class="incident-info">
-                    <div class="incident-info-left">
-                        <h4>Incident {{this.incidentID}}: {{this.title}}</h4>
-                    </div>
-                    <div class="relation-status">
-                        <strong>{{this.assets.length}}</strong> asset(s) involved
-                    </div>
-                </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>IP Address</th>
-                            <th>Department</th>
-                            <th>Type</th>
-                            <th class="action-cell">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#each this.assets}}
-                            <tr>
-                                <td><strong>{{this.name}}</strong></td>
-                                <td>{{this.ipAddress}}</td>
-                                <td>{{this.department}}</td>
-                                <td><span class="status-badge">{{this.type}}</span></td>
-                                <td class="action-cell">
-                                    <a href="/incidents/{{../this.incidentID}}/manage-assets" class="btn btn-secondary btn-small">Manage</a>
-                                </td>
-                            </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-            {{/if}}
-        {{/each}}
-    {{/if}}
-</div>
-
-<div class="crud-section">
-    <h3>Incident_CVEs (M:N Relationship)</h3>
-    {{#if incidents}}
-        {{#each incidents}}
-            {{#if this.cves}}
-                <div class="incident-info">
-                    <div class="incident-info-left">
-                        <h4>Incident {{this.incidentID}}: {{this.title}}</h4>
-                    </div>
-                    <div class="relation-status">
-                        <strong>{{this.cves.length}}</strong> CVE(s) linked
-                    </div>
-                </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>CVE Code</th>
-                            <th>Description</th>
-                            <th>CVSS Score</th>
-                            <th>Published Date</th>
-                            <th class="action-cell">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#each this.cves}}
-                            <tr>
-                                <td><strong>{{this.cveCode}}</strong></td>
-                                <td>{{this.description}}</td>
-                                <td>{{this.cvssScore}}</td>
-                                <td>{{formatDate this.publishedDate}}</td>
-                                <td class="action-cell">
-                                    <a href="/incidents/{{../this.incidentID}}/manage-cves" class="btn btn-secondary btn-small">Manage</a>
-                                </td>
-                            </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-            {{/if}}
-        {{/each}}
     {{/if}}
 </div>

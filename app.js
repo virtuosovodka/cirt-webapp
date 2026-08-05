@@ -138,9 +138,21 @@ app.get('/incidents/add', (req, res) => {
   });
 });
 
-// Add incident (POST) - form submission
+// Add incident (POST)
 app.post('/incidents', (req, res) => {
-  res.redirect('/incidents');
+  const { title, description, reportedAt, severityLevelID, statusID } = req.body;
+  const query = `
+    INSERT INTO Incidents (title, description, reportedAt, severityLevelID, statusID)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+  db.pool.query(query, [title, description, reportedAt, severityLevelID, statusID], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/incidents');
+    }
+  });
 });
 
 // Edit incident form (GET)
@@ -177,13 +189,34 @@ app.get('/incidents/:id/edit', (req, res) => {
 // Update incident (POST)
 app.post('/incidents/:id', (req, res) => {
   const incidentId = req.params.id;
-  res.redirect('/incidents');
+  const { title, description, reportedAt, closedAt, severityLevelID, statusID } = req.body;
+  const query = `
+    UPDATE Incidents
+    SET title = ?, description = ?, reportedAt = ?, closedAt = ?, severityLevelID = ?, statusID = ?
+    WHERE incidentID = ?
+  `;
+  db.pool.query(query, [title, description, reportedAt, closedAt, severityLevelID, statusID, incidentId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/incidents');
+    }
+  });
 });
 
 // Delete incident
 app.post('/incidents/:id/delete', (req, res) => {
   const incidentId = req.params.id;
-  res.redirect('/incidents');
+  const query = "DELETE FROM Incidents WHERE incidentID = ?;";
+  db.pool.query(query, [incidentId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/incidents');
+    }
+  });
 });
 
 // Manage analysts for incident (GET)
@@ -475,7 +508,6 @@ app.get('/analysts/:id/edit', (req, res) => {
         res.redirect('/analysts');
       } else {
         const analyst = rows[0];
-        // Format hireDate as YYYY-MM-DD for the date input field
         if (analyst.hireDate) {
           analyst.hireDate = new Date(analyst.hireDate).toISOString().split('T')[0];
         }
@@ -541,22 +573,66 @@ app.get('/assets/add', (req, res) => {
 });
 
 app.post('/assets', (req, res) => {
-  res.redirect('/assets');
+  const { name, ipAddress, department, type } = req.body;
+  const query = `
+    INSERT INTO Assets (name, ipAddress, department, type)
+    VALUES (?, ?, ?, ?)
+  `;
+  db.pool.query(query, [name, ipAddress, department, type], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/assets');
+    }
+  });
 });
 
 app.get('/assets/:id/edit', (req, res) => {
   const assetId = req.params.id;
-  res.render('edit-asset', { asset: {} });
+  db.pool.query(
+    'SELECT * FROM Assets WHERE assetID = ?',
+    [assetId],
+    function(error, rows) {
+      if (error || rows.length === 0) {
+        console.log(error);
+        res.redirect('/assets');
+      } else {
+        res.render('edit-asset', { asset: rows[0] });
+      }
+    }
+  );
 });
 
 app.post('/assets/:id', (req, res) => {
   const assetId = req.params.id;
-  res.redirect('/assets');
+  const { name, ipAddress, department, type } = req.body;
+  const query = `
+    UPDATE Assets
+    SET name = ?, ipAddress = ?, department = ?, type = ?
+    WHERE assetID = ?
+  `;
+  db.pool.query(query, [name, ipAddress, department, type, assetId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/assets');
+    }
+  });
 });
 
 app.post('/assets/:id/delete', (req, res) => {
   const assetId = req.params.id;
-  res.redirect('/assets');
+  const query = "DELETE FROM Assets WHERE assetID = ?;";
+  db.pool.query(query, [assetId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/assets');
+    }
+  });
 });
 
 // CVEs
@@ -582,22 +658,66 @@ app.get('/cves/add', (req, res) => {
 });
 
 app.post('/cves', (req, res) => {
-  res.redirect('/cves');
+  const { cveCode, description, cvssScore, publishedDate } = req.body;
+  const query = `
+    INSERT INTO CVEs (cveCode, description, cvssScore, publishedDate)
+    VALUES (?, ?, ?, ?)
+  `;
+  db.pool.query(query, [cveCode, description, cvssScore, publishedDate], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/cves');
+    }
+  });
 });
 
 app.get('/cves/:id/edit', (req, res) => {
   const cveId = req.params.id;
-  res.render('edit-cve', { cve: {} });
+  db.pool.query(
+    'SELECT * FROM CVEs WHERE cveID = ?',
+    [cveId],
+    function(error, rows) {
+      if (error || rows.length === 0) {
+        console.log(error);
+        res.redirect('/cves');
+      } else {
+        res.render('edit-cve', { cve: rows[0] });
+      }
+    }
+  );
 });
 
 app.post('/cves/:id', (req, res) => {
   const cveId = req.params.id;
-  res.redirect('/cves');
+  const { cveCode, description, cvssScore, publishedDate } = req.body;
+  const query = `
+    UPDATE CVEs
+    SET cveCode = ?, description = ?, cvssScore = ?, publishedDate = ?
+    WHERE cveID = ?
+  `;
+  db.pool.query(query, [cveCode, description, cvssScore, publishedDate, cveId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/cves');
+    }
+  });
 });
 
 app.post('/cves/:id/delete', (req, res) => {
   const cveId = req.params.id;
-  res.redirect('/cves');
+  const query = "DELETE FROM CVEs WHERE cveID = ?;";
+  db.pool.query(query, [cveId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/cves');
+    }
+  });
 });
 
 // SEVERITY LEVELS
@@ -623,22 +743,66 @@ app.get('/severity-levels/add', (req, res) => {
 });
 
 app.post('/severity-levels', (req, res) => {
-  res.redirect('/severity-levels');
+  const { severityName, responseHours } = req.body;
+  const query = `
+    INSERT INTO Severity_Levels (severityName, responseHours)
+    VALUES (?, ?)
+  `;
+  db.pool.query(query, [severityName, responseHours], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/severity-levels');
+    }
+  });
 });
 
 app.get('/severity-levels/:id/edit', (req, res) => {
   const severityId = req.params.id;
-  res.render('edit-severity-level', { severity: {} });
+  db.pool.query(
+    'SELECT * FROM Severity_Levels WHERE severityLevelID = ?',
+    [severityId],
+    function(error, rows) {
+      if (error || rows.length === 0) {
+        console.log(error);
+        res.redirect('/severity-levels');
+      } else {
+        res.render('edit-severity-level', { severity: rows[0] });
+      }
+    }
+  );
 });
 
 app.post('/severity-levels/:id', (req, res) => {
   const severityId = req.params.id;
-  res.redirect('/severity-levels');
+  const { severityName, responseHours } = req.body;
+  const query = `
+    UPDATE Severity_Levels
+    SET severityName = ?, responseHours = ?
+    WHERE severityLevelID = ?
+  `;
+  db.pool.query(query, [severityName, responseHours, severityId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/severity-levels');
+    }
+  });
 });
 
 app.post('/severity-levels/:id/delete', (req, res) => {
   const severityId = req.params.id;
-  res.redirect('/severity-levels');
+  const query = "DELETE FROM Severity_Levels WHERE severityLevelID = ?;";
+  db.pool.query(query, [severityId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/severity-levels');
+    }
+  });
 });
 
 // STATUSES
@@ -662,22 +826,66 @@ app.get('/statuses/add', (req, res) => {
 });
 
 app.post('/statuses', (req, res) => {
-  res.redirect('/statuses');
+  const { statusName } = req.body;
+  const query = `
+    INSERT INTO Statuses (statusName)
+    VALUES (?)
+  `;
+  db.pool.query(query, [statusName], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/statuses');
+    }
+  });
 });
 
 app.get('/statuses/:id/edit', (req, res) => {
   const statusId = req.params.id;
-  res.render('edit-status', { status: {} });
+  db.pool.query(
+    'SELECT * FROM Statuses WHERE statusID = ?',
+    [statusId],
+    function(error, rows) {
+      if (error || rows.length === 0) {
+        console.log(error);
+        res.redirect('/statuses');
+      } else {
+        res.render('edit-status', { status: rows[0] });
+      }
+    }
+  );
 });
 
 app.post('/statuses/:id', (req, res) => {
   const statusId = req.params.id;
-  res.redirect('/statuses');
+  const { statusName } = req.body;
+  const query = `
+    UPDATE Statuses
+    SET statusName = ?
+    WHERE statusID = ?
+  `;
+  db.pool.query(query, [statusName, statusId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/statuses');
+    }
+  });
 });
 
 app.post('/statuses/:id/delete', (req, res) => {
   const statusId = req.params.id;
-  res.redirect('/statuses');
+  const query = "DELETE FROM Statuses WHERE statusID = ?;";
+  db.pool.query(query, [statusId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/statuses');
+    }
+  });
 });
 
 // RESET DATABASE

@@ -1,0 +1,13 @@
+function toggleIncidentDetails(row) {
+    // Get the details row (next row in the table)
+    const detailsRow = row.nextElementSibling;
+    const expandIcon = row.querySelector('.expand-icon');
+    
+    if (detailsRow) {
+        detailsRow.classList.toggle('show');
+    }
+    if (expandIcon) {
+        expandIcon.classList.toggle('expanded');
+    }
+    row.classList.toggle('expanded');
+}
