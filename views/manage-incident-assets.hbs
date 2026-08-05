@@ -1,0 +1,89 @@
+<div class="page-header">
+    <h2>Manage Assets</h2>
+    <a href="/incidents" class="btn btn-primary">Back to Incidents</a>
+</div>
+
+<div class="incident-info">
+    <div class="incident-info-left">
+        <h3>{{incidentTitle}}</h3>
+        <p>Incident ID: {{incidentID}}</p>
+    </div>
+    <div class="relation-status">
+        <strong>{{assignedAssets.length}}</strong> asset(s) involved
+    </div>
+</div>
+
+<div class="instructions">
+    <h3>How to manage assets</h3>
+    <p>
+        Use the left section to <strong>remove assets</strong> that are no longer involved in this incident.
+        Use the right section to <strong>add assets</strong> that are affected by this incident.
+        Click "Remove" or "Add" to update the asset assignments.
+    </p>
+</div>
+
+<div class="management-container">
+    <div class="management-section assigned">
+        <h4>Involved Assets</h4>
+        {{#if assignedAssets}}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Department</th>
+                        <th class="action-cell">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each assignedAssets}}
+                        <tr>
+                            <td><strong>{{this.name}}</strong></td>
+                            <td><span class="status-badge">{{this.type}}</span></td>
+                            <td>{{this.department}}</td>
+                            <td class="action-cell">
+                                <form method="POST" action="/incidents/{{../incidentID}}/remove-asset/{{this.assetID}}" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Remove this asset?')">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        {{else}}
+            <p class="empty-relation">No assets currently involved in this incident.</p>
+        {{/if}}
+    </div>
+
+    <div class="management-section available">
+        <h4>Available Assets</h4>
+        {{#if availableAssets}}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Department</th>
+                        <th class="action-cell">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each availableAssets}}
+                        <tr>
+                            <td><strong>{{this.name}}</strong></td>
+                            <td><span class="status-badge">{{this.type}}</span></td>
+                            <td>{{this.department}}</td>
+                            <td class="action-cell">
+                                <form method="POST" action="/incidents/{{../incidentID}}/add-asset/{{this.assetID}}" style="display:inline;">
+                                    <button type="submit" class="btn btn-secondary btn-small">Add</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        {{else}}
+            <p class="empty-relation">All assets are already involved in this incident.</p>
+        {{/if}}
+    </div>
+</div>

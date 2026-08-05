@@ -1,0 +1,89 @@
+<div class="page-header">
+    <h2>Manage CVEs</h2>
+    <a href="/incidents" class="btn btn-primary">Back to Incidents</a>
+</div>
+
+<div class="incident-info">
+    <div class="incident-info-left">
+        <h3>{{incidentTitle}}</h3>
+        <p>Incident ID: {{incidentID}}</p>
+    </div>
+    <div class="relation-status">
+        <strong>{{assignedCVEs.length}}</strong> CVE(s) linked
+    </div>
+</div>
+
+<div class="instructions">
+    <h3>How to manage CVEs</h3>
+    <p>
+        Use the left section to <strong>unlink CVEs</strong> that are no longer relevant to this incident.
+        Use the right section to <strong>link CVEs</strong> that are related to this incident.
+        Click "Remove" or "Add" to update the CVE associations.
+    </p>
+</div>
+
+<div class="management-container">
+    <div class="management-section assigned">
+        <h4>Linked CVEs</h4>
+        {{#if assignedCVEs}}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>CVE Code</th>
+                        <th>CVSS Score</th>
+                        <th>Published</th>
+                        <th class="action-cell">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each assignedCVEs}}
+                        <tr>
+                            <td><strong>{{this.cveCode}}</strong></td>
+                            <td>{{this.cvssScore}}</td>
+                            <td>{{formatDate this.publishedDate}}</td>
+                            <td class="action-cell">
+                                <form method="POST" action="/incidents/{{../incidentID}}/remove-cve/{{this.cveID}}" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Remove this CVE?')">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        {{else}}
+            <p class="empty-relation">No CVEs currently linked to this incident.</p>
+        {{/if}}
+    </div>
+
+    <div class="management-section available">
+        <h4>Available CVEs</h4>
+        {{#if availableCVEs}}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>CVE Code</th>
+                        <th>Description</th>
+                        <th>CVSS Score</th>
+                        <th class="action-cell">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each availableCVEs}}
+                        <tr>
+                            <td><strong>{{this.cveCode}}</strong></td>
+                            <td>{{this.description}}</td>
+                            <td>{{this.cvssScore}}</td>
+                            <td class="action-cell">
+                                <form method="POST" action="/incidents/{{../incidentID}}/add-cve/{{this.cveID}}" style="display:inline;">
+                                    <button type="submit" class="btn btn-secondary btn-small">Add</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        {{else}}
+            <p class="empty-relation">All CVEs are already linked to this incident.</p>
+        {{/if}}
+    </div>
+</div>

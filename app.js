@@ -50,10 +50,67 @@ app.get('/incidents', (req, res) => {
           console.log(error);
           res.sendStatus(500);
       } else {
-          res.render('incidents', { 
-            incidents: rows,
-            isIncidents: true,
-            title: 'Incidents'
+          // For each incident, fetch related analysts, assets, and CVEs
+          const incidentsWithRelations = rows.map(incident => {
+              return new Promise((resolve, reject) => {
+                  // Fetch analysts for this incident
+                  const analystQuery = `
+                      SELECT a.analystID, a.firstName, a.lastName, a.email, a.role
+                      FROM Analysts a
+                      INNER JOIN Incident_Analysts ia ON a.analystID = ia.analystID
+                      WHERE ia.incidentID = ?
+                      ORDER BY a.lastName ASC, a.firstName ASC
+                  `;
+                  
+                  db.pool.query(analystQuery, [incident.incidentID], function(error, analysts) {
+                      if (error) {
+                          console.log(error);
+                          resolve({ ...incident, analysts: [], assets: [], cves: [] });
+                      } else {
+                          // Fetch assets for this incident
+                          const assetQuery = `
+                              SELECT a.assetID, a.name, a.ipAddress, a.department, a.type
+                              FROM Assets a
+                              INNER JOIN Incident_Assets ia ON a.assetID = ia.assetID
+                              WHERE ia.incidentID = ?
+                              ORDER BY a.name ASC
+                          `;
+                          
+                          db.pool.query(assetQuery, [incident.incidentID], function(error, assets) {
+                              if (error) {
+                                  console.log(error);
+                                  resolve({ ...incident, analysts: analysts, assets: [], cves: [] });
+                              } else {
+                                  // Fetch CVEs for this incident
+                                  const cveQuery = `
+                                      SELECT c.cveID, c.cveCode, c.description, c.cvssScore, c.publishedDate
+                                      FROM CVEs c
+                                      INNER JOIN Incident_CVEs ic ON c.cveID = ic.cveID
+                                      WHERE ic.incidentID = ?
+                                      ORDER BY c.publishedDate DESC
+                                  `;
+                                  
+                                  db.pool.query(cveQuery, [incident.incidentID], function(error, cves) {
+                                      if (error) {
+                                          console.log(error);
+                                          resolve({ ...incident, analysts: analysts, assets: assets, cves: [] });
+                                      } else {
+                                          resolve({ ...incident, analysts: analysts, assets: assets, cves: cves });
+                                      }
+                                  });
+                              }
+                          });
+                      }
+                  });
+              });
+          });
+          
+          Promise.all(incidentsWithRelations).then(enhancedIncidents => {
+              res.render('incidents', { 
+                incidents: enhancedIncidents,
+                isIncidents: true,
+                title: 'Incidents'
+              });
           });
       }
   });
@@ -127,6 +184,246 @@ app.post('/incidents/:id', (req, res) => {
 app.post('/incidents/:id/delete', (req, res) => {
   const incidentId = req.params.id;
   res.redirect('/incidents');
+});
+
+// Manage analysts for incident (GET)
+app.get('/incidents/:id/manage-analysts', (req, res) => {
+  const incidentId = req.params.id;
+  
+  const incidentQuery = "SELECT incidentID, title FROM Incidents WHERE incidentID = ?;";
+  const assignedQuery = `
+    SELECT a.analystID, a.firstName, a.lastName, a.email, a.role
+    FROM Analysts a
+    INNER JOIN Incident_Analysts ia ON a.analystID = ia.analystID
+    WHERE ia.incidentID = ?
+    ORDER BY a.lastName ASC, a.firstName ASC
+  `;
+  const availableQuery = `
+    SELECT a.analystID, a.firstName, a.lastName, a.email, a.role
+    FROM Analysts a
+    WHERE a.analystID NOT IN (
+      SELECT analystID FROM Incident_Analysts WHERE incidentID = ?
+    )
+    ORDER BY a.lastName ASC, a.firstName ASC
+  `;
+  
+  db.pool.query(incidentQuery, [incidentId], function(error, incident) {
+    if (error || incident.length === 0) {
+      console.log(error);
+      res.redirect('/incidents');
+    } else {
+      db.pool.query(assignedQuery, [incidentId], function(error, assignedAnalysts) {
+        if (error) {
+          console.log(error);
+          assignedAnalysts = [];
+        }
+        db.pool.query(availableQuery, [incidentId], function(error, availableAnalysts) {
+          if (error) {
+            console.log(error);
+            availableAnalysts = [];
+          }
+          res.render('manage-incident-analysts', {
+            incidentID: incidentId,
+            incidentTitle: incident[0].title,
+            assignedAnalysts: assignedAnalysts,
+            availableAnalysts: availableAnalysts
+          });
+        });
+      });
+    }
+  });
+});
+
+// Add analyst to incident (POST)
+app.post('/incidents/:incidentId/add-analyst/:analystId', (req, res) => {
+  const incidentId = req.params.incidentId;
+  const analystId = req.params.analystId;
+  
+  const query = "INSERT INTO Incident_Analysts (incidentID, analystID) VALUES (?, ?);";
+  db.pool.query(query, [incidentId, analystId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect(`/incidents/${incidentId}/manage-analysts`);
+    }
+  });
+});
+
+// Remove analyst from incident (POST)
+app.post('/incidents/:incidentId/remove-analyst/:analystId', (req, res) => {
+  const incidentId = req.params.incidentId;
+  const analystId = req.params.analystId;
+  
+  const query = "DELETE FROM Incident_Analysts WHERE incidentID = ? AND analystID = ?;";
+  db.pool.query(query, [incidentId, analystId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect(`/incidents/${incidentId}/manage-analysts`);
+    }
+  });
+});
+
+// Manage assets for incident (GET)
+app.get('/incidents/:id/manage-assets', (req, res) => {
+  const incidentId = req.params.id;
+  
+  const incidentQuery = "SELECT incidentID, title FROM Incidents WHERE incidentID = ?;";
+  const assignedQuery = `
+    SELECT a.assetID, a.name, a.ipAddress, a.department, a.type
+    FROM Assets a
+    INNER JOIN Incident_Assets ia ON a.assetID = ia.assetID
+    WHERE ia.incidentID = ?
+    ORDER BY a.name ASC
+  `;
+  const availableQuery = `
+    SELECT a.assetID, a.name, a.ipAddress, a.department, a.type
+    FROM Assets a
+    WHERE a.assetID NOT IN (
+      SELECT assetID FROM Incident_Assets WHERE incidentID = ?
+    )
+    ORDER BY a.name ASC
+  `;
+  
+  db.pool.query(incidentQuery, [incidentId], function(error, incident) {
+    if (error || incident.length === 0) {
+      console.log(error);
+      res.redirect('/incidents');
+    } else {
+      db.pool.query(assignedQuery, [incidentId], function(error, assignedAssets) {
+        if (error) {
+          console.log(error);
+          assignedAssets = [];
+        }
+        db.pool.query(availableQuery, [incidentId], function(error, availableAssets) {
+          if (error) {
+            console.log(error);
+            availableAssets = [];
+          }
+          res.render('manage-incident-assets', {
+            incidentID: incidentId,
+            incidentTitle: incident[0].title,
+            assignedAssets: assignedAssets,
+            availableAssets: availableAssets
+          });
+        });
+      });
+    }
+  });
+});
+
+// Add asset to incident (POST)
+app.post('/incidents/:incidentId/add-asset/:assetId', (req, res) => {
+  const incidentId = req.params.incidentId;
+  const assetId = req.params.assetId;
+  
+  const query = "INSERT INTO Incident_Assets (incidentID, assetID) VALUES (?, ?);";
+  db.pool.query(query, [incidentId, assetId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect(`/incidents/${incidentId}/manage-assets`);
+    }
+  });
+});
+
+// Remove asset from incident (POST)
+app.post('/incidents/:incidentId/remove-asset/:assetId', (req, res) => {
+  const incidentId = req.params.incidentId;
+  const assetId = req.params.assetId;
+  
+  const query = "DELETE FROM Incident_Assets WHERE incidentID = ? AND assetID = ?;";
+  db.pool.query(query, [incidentId, assetId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect(`/incidents/${incidentId}/manage-assets`);
+    }
+  });
+});
+
+// Manage CVEs for incident (GET)
+app.get('/incidents/:id/manage-cves', (req, res) => {
+  const incidentId = req.params.id;
+  
+  const incidentQuery = "SELECT incidentID, title FROM Incidents WHERE incidentID = ?;";
+  const assignedQuery = `
+    SELECT c.cveID, c.cveCode, c.description, c.cvssScore, c.publishedDate
+    FROM CVEs c
+    INNER JOIN Incident_CVEs ic ON c.cveID = ic.cveID
+    WHERE ic.incidentID = ?
+    ORDER BY c.publishedDate DESC
+  `;
+  const availableQuery = `
+    SELECT c.cveID, c.cveCode, c.description, c.cvssScore, c.publishedDate
+    FROM CVEs c
+    WHERE c.cveID NOT IN (
+      SELECT cveID FROM Incident_CVEs WHERE incidentID = ?
+    )
+    ORDER BY c.publishedDate DESC
+  `;
+  
+  db.pool.query(incidentQuery, [incidentId], function(error, incident) {
+    if (error || incident.length === 0) {
+      console.log(error);
+      res.redirect('/incidents');
+    } else {
+      db.pool.query(assignedQuery, [incidentId], function(error, assignedCVEs) {
+        if (error) {
+          console.log(error);
+          assignedCVEs = [];
+        }
+        db.pool.query(availableQuery, [incidentId], function(error, availableCVEs) {
+          if (error) {
+            console.log(error);
+            availableCVEs = [];
+          }
+          res.render('manage-incident-cves', {
+            incidentID: incidentId,
+            incidentTitle: incident[0].title,
+            assignedCVEs: assignedCVEs,
+            availableCVEs: availableCVEs
+          });
+        });
+      });
+    }
+  });
+});
+
+// Add CVE to incident (POST)
+app.post('/incidents/:incidentId/add-cve/:cveId', (req, res) => {
+  const incidentId = req.params.incidentId;
+  const cveId = req.params.cveId;
+  
+  const query = "INSERT INTO Incident_CVEs (incidentID, cveID) VALUES (?, ?);";
+  db.pool.query(query, [incidentId, cveId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect(`/incidents/${incidentId}/manage-cves`);
+    }
+  });
+});
+
+// Remove CVE from incident (POST)
+app.post('/incidents/:incidentId/remove-cve/:cveId', (req, res) => {
+  const incidentId = req.params.incidentId;
+  const cveId = req.params.cveId;
+  
+  const query = "DELETE FROM Incident_CVEs WHERE incidentID = ? AND cveID = ?;";
+  db.pool.query(query, [incidentId, cveId], function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect(`/incidents/${incidentId}/manage-cves`);
+    }
+  });
 });
 
 // ANALYSTS

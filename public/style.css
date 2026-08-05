@@ -675,3 +675,152 @@ footer {
         gap: 0.75rem;
     }
 }
+
+
+.management-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.management-section {
+    background-color: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.management-section h4 {
+    color: #1a1a2e;
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #0066cc;
+}
+
+.management-section.assigned h4 {
+    border-bottom-color: #f44336;
+}
+
+.management-section.available h4 {
+    border-bottom-color: #4caf50;
+}
+
+.instructions {
+    background-color: #e8f4f8;
+    border-left: 4px solid #00b8d4;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+.instructions h3 {
+    color: #00b8d4;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.instructions p {
+    margin: 0.5rem 0;
+}
+
+.instructions strong {
+    color: #1a1a2e;
+}
+
+.empty-relation {
+    color: #999;
+    font-style: italic;
+    padding: 1rem;
+    text-align: center;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+}
+
+.incident-info {
+    background-color: #f0f7ff;
+    border-left: 4px solid #0066cc;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.incident-info h3 {
+    color: #0066cc;
+    font-size: 1.3rem;
+    margin-bottom: 0.25rem;
+}
+
+.incident-info p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.incident-info-left {
+    flex: 1;
+}
+
+.relation-status {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    text-align: right;
+    font-size: 0.9rem;
+}
+
+.relation-status strong {
+    color: #0066cc;
+    font-size: 1.1rem;
+}
+
+/* Management table adjustments */
+.management-section .data-table {
+    margin-top: 1rem;
+}
+
+.management-section .data-table th {
+    background-color: #f5f5f5;
+    color: #1a1a2e;
+    font-weight: 600;
+    border-bottom: 2px solid #ddd;
+}
+
+.management-section .data-table td {
+    padding: 0.875rem 1rem;
+}
+
+.management-section .data-table tbody tr:hover {
+    background-color: #fafafa;
+}
+
+.action-cell {
+    text-align: center;
+}
+
+.action-cell .btn {
+    white-space: nowrap;
+}
+
+@media (max-width: 1024px) {
+    .management-container {
+        grid-template-columns: 1fr;
+    }
+
+    .incident-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .relation-status {
+        margin-top: 1rem;
+    }
+}

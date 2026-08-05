@@ -1,0 +1,89 @@
+<div class="page-header">
+    <h2>Manage Analysts</h2>
+    <a href="/incidents" class="btn btn-primary">Back to Incidents</a>
+</div>
+
+<div class="incident-info">
+    <div class="incident-info-left">
+        <h3>{{incidentTitle}}</h3>
+        <p>Incident ID: {{incidentID}}</p>
+    </div>
+    <div class="relation-status">
+        <strong>{{assignedAnalysts.length}}</strong> analyst(s) assigned
+    </div>
+</div>
+
+<div class="instructions">
+    <h3>How to manage analysts</h3>
+    <p>
+        Use the left section to <strong>remove analysts</strong> who are currently assigned to this incident.
+        Use the right section to <strong>add analysts</strong> who are not yet involved.
+        Click "Remove" or "Add" to update the assignments.
+    </p>
+</div>
+
+<div class="management-container">
+    <div class="management-section assigned">
+        <h4>Assigned Analysts</h4>
+        {{#if assignedAnalysts}}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th class="action-cell">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each assignedAnalysts}}
+                        <tr>
+                            <td><strong>{{this.firstName}} {{this.lastName}}</strong></td>
+                            <td>{{this.email}}</td>
+                            <td><span class="status-badge status-{{this.role}}">{{this.role}}</span></td>
+                            <td class="action-cell">
+                                <form method="POST" action="/incidents/{{../incidentID}}/remove-analyst/{{this.analystID}}" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Remove this analyst?')">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        {{else}}
+            <p class="empty-relation">No analysts currently assigned to this incident.</p>
+        {{/if}}
+    </div>
+
+    <div class="management-section available">
+        <h4>Available Analysts</h4>
+        {{#if availableAnalysts}}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th class="action-cell">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each availableAnalysts}}
+                        <tr>
+                            <td><strong>{{this.firstName}} {{this.lastName}}</strong></td>
+                            <td>{{this.email}}</td>
+                            <td><span class="status-badge status-{{this.role}}">{{this.role}}</span></td>
+                            <td class="action-cell">
+                                <form method="POST" action="/incidents/{{../incidentID}}/add-analyst/{{this.analystID}}" style="display:inline;">
+                                    <button type="submit" class="btn btn-secondary btn-small">Add</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        {{else}}
+            <p class="empty-relation">All analysts are already assigned to this incident.</p>
+        {{/if}}
+    </div>
+</div>
