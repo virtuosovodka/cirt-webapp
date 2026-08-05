@@ -680,6 +680,18 @@ app.post('/statuses/:id/delete', (req, res) => {
   res.redirect('/statuses');
 });
 
+// RESET DATABASE
+app.post('/reset-database', (req, res) => {
+  db.pool.query('CALL ResetDatabase()', function(error) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.redirect('/');
+    }
+  });
+});
+
 // START SERVER
 
 const PORT = process.env.PORT || 9430;

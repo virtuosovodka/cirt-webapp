@@ -17,6 +17,14 @@
     </div>
 </section>
 
+<section class="container" style="text-align: center; margin-top: 2rem;">
+    <h2>Database Management</h2>
+    <p style="color: #666; margin-bottom: 1rem;">Reset the database to its default state with the original sample data. This will drop and recreate all tables.</p>
+    <form method="POST" action="/reset-database" onsubmit="return confirm('Are you sure? This will delete all current data and restore the database to its default state.');">
+        <button type="submit" class="btn btn-danger">Reset Database</button>
+    </form>
+</section>
+
 <section class="container">
     <div class="overview">
         <h2>Why CIRT?</h2>
