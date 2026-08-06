@@ -815,7 +815,8 @@ app.get('/statuses', (req, res) => {
       } else {
           res.render('statuses', { 
             statuses: rows,
-            title: 'Statuses'
+            title: 'Statuses', 
+            isStatuses: true
           });
       }
   });
