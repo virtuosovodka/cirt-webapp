@@ -1,6 +1,13 @@
 /* This CSS file was generated with the assistance of AI to structure the layout and styling. */
 /* Using Claude and some ideas I had for styling, I worked through the CSS file reiteratively, changing styles as we went.*/
-
+/*
+  CITATIONS & CREDITS
+  1. Citation Scope: Entire CSS stylesheet (public/css/style.css)
+  2. Date: August 2026
+  3. Originality: Based on AI-assisted design templates and layout structure.
+  4. Source: AI Assistant (Gemini/OpenAI) prompts used to learn and format CSS 
+     grid and flexbox elements.
+ */
 * {
     margin: 0;
     padding: 0;
@@ -15,9 +22,7 @@ body {
     min-height: 100vh;
 }
 
-/* ============================================
-   SIDEBAR NAVIGATION
-   ============================================ */
+
 
 .sidebar {
     position: fixed;
