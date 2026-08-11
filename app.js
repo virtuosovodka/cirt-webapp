@@ -13,7 +13,8 @@ app.engine('hbs', exphbs.engine({
     layoutsDir: path.join(__dirname, 'views/layouts'),
     helpers: {
         eq: (a, b) => a === b,
-        formatDate: (date) => date ? new Date(date).toISOString().split('T')[0] : ''
+        formatDate: (date) => date ? new Date(date).toISOString().split('T')[0] : '',
+        formatDateTime: (date) => date ? new Date(date).toISOString().slice(0, 16) : ''
     }
 }));
 app.set('view engine', 'hbs');
@@ -141,18 +142,18 @@ app.get('/incidents/add', (req, res) => {
 // Add incident (POST)
 app.post('/incidents', (req, res) => {
   const { title, description, reportedAt, severityLevelID, statusID } = req.body;
-  const query = `
-    INSERT INTO Incidents (title, description, reportedAt, severityLevelID, statusID)
-    VALUES (?, ?, ?, ?, ?)
-  `;
-  db.pool.query(query, [title, description, reportedAt, severityLevelID, statusID], function(error) {
-    if (error) {
-      console.log(error);
-      res.sendStatus(500);
-    } else {
-      res.redirect('/incidents');
+  db.pool.query(
+    'CALL AddIncident(?, ?, ?, NULL, ?, ?)',
+    [title, description, reportedAt, severityLevelID, statusID],
+    function(error) {
+      if (error) {
+        console.log(error);
+        res.sendStatus(500);
+      } else {
+        res.redirect('/incidents');
+      }
     }
-  });
+  );
 });
 
 // Edit incident form (GET)
@@ -190,26 +191,24 @@ app.get('/incidents/:id/edit', (req, res) => {
 app.post('/incidents/:id', (req, res) => {
   const incidentId = req.params.id;
   const { title, description, reportedAt, closedAt, severityLevelID, statusID } = req.body;
-  const query = `
-    UPDATE Incidents
-    SET title = ?, description = ?, reportedAt = ?, closedAt = ?, severityLevelID = ?, statusID = ?
-    WHERE incidentID = ?
-  `;
-  db.pool.query(query, [title, description, reportedAt, closedAt, severityLevelID, statusID, incidentId], function(error) {
-    if (error) {
-      console.log(error);
-      res.sendStatus(500);
-    } else {
-      res.redirect('/incidents');
+  db.pool.query(
+    'CALL UpdateIncident(?, ?, ?, ?, ?, ?, ?)',
+    [incidentId, title, description, reportedAt, closedAt || null, severityLevelID, statusID],
+    function(error) {
+      if (error) {
+        console.log(error);
+        res.sendStatus(500);
+      } else {
+        res.redirect('/incidents');
+      }
     }
-  });
+  );
 });
 
 // Delete incident
 app.post('/incidents/:id/delete', (req, res) => {
   const incidentId = req.params.id;
-  const query = "DELETE FROM Incidents WHERE incidentID = ?;";
-  db.pool.query(query, [incidentId], function(error) {
+  db.pool.query('CALL DeleteIncident(?)', [incidentId], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -271,9 +270,7 @@ app.get('/incidents/:id/manage-analysts', (req, res) => {
 app.post('/incidents/:incidentId/add-analyst/:analystId', (req, res) => {
   const incidentId = req.params.incidentId;
   const analystId = req.params.analystId;
-  
-  const query = "INSERT INTO Incident_Analysts (incidentID, analystID) VALUES (?, ?);";
-  db.pool.query(query, [incidentId, analystId], function(error) {
+  db.pool.query('CALL AddIncidentAnalyst(?, ?)', [incidentId, analystId], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -287,9 +284,7 @@ app.post('/incidents/:incidentId/add-analyst/:analystId', (req, res) => {
 app.post('/incidents/:incidentId/remove-analyst/:analystId', (req, res) => {
   const incidentId = req.params.incidentId;
   const analystId = req.params.analystId;
-  
-  const query = "DELETE FROM Incident_Analysts WHERE incidentID = ? AND analystID = ?;";
-  db.pool.query(query, [incidentId, analystId], function(error) {
+  db.pool.query('CALL DeleteIncidentAnalyst(?, ?)', [incidentId, analystId], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -351,9 +346,7 @@ app.get('/incidents/:id/manage-assets', (req, res) => {
 app.post('/incidents/:incidentId/add-asset/:assetId', (req, res) => {
   const incidentId = req.params.incidentId;
   const assetId = req.params.assetId;
-  
-  const query = "INSERT INTO Incident_Assets (incidentID, assetID) VALUES (?, ?);";
-  db.pool.query(query, [incidentId, assetId], function(error) {
+  db.pool.query('CALL AddIncidentAsset(?, ?)', [incidentId, assetId], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -367,9 +360,7 @@ app.post('/incidents/:incidentId/add-asset/:assetId', (req, res) => {
 app.post('/incidents/:incidentId/remove-asset/:assetId', (req, res) => {
   const incidentId = req.params.incidentId;
   const assetId = req.params.assetId;
-  
-  const query = "DELETE FROM Incident_Assets WHERE incidentID = ? AND assetID = ?;";
-  db.pool.query(query, [incidentId, assetId], function(error) {
+  db.pool.query('CALL DeleteIncidentAsset(?, ?)', [incidentId, assetId], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -431,9 +422,7 @@ app.get('/incidents/:id/manage-cves', (req, res) => {
 app.post('/incidents/:incidentId/add-cve/:cveId', (req, res) => {
   const incidentId = req.params.incidentId;
   const cveId = req.params.cveId;
-  
-  const query = "INSERT INTO Incident_CVEs (incidentID, cveID) VALUES (?, ?);";
-  db.pool.query(query, [incidentId, cveId], function(error) {
+  db.pool.query('CALL AddIncidentCVE(?, ?)', [incidentId, cveId], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -447,9 +436,7 @@ app.post('/incidents/:incidentId/add-cve/:cveId', (req, res) => {
 app.post('/incidents/:incidentId/remove-cve/:cveId', (req, res) => {
   const incidentId = req.params.incidentId;
   const cveId = req.params.cveId;
-  
-  const query = "DELETE FROM Incident_CVEs WHERE incidentID = ? AND cveID = ?;";
-  db.pool.query(query, [incidentId, cveId], function(error) {
+  db.pool.query('CALL DeleteIncidentCVE(?, ?)', [incidentId, cveId], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -574,11 +561,7 @@ app.get('/assets/add', (req, res) => {
 
 app.post('/assets', (req, res) => {
   const { name, ipAddress, department, type } = req.body;
-  const query = `
-    INSERT INTO Assets (name, ipAddress, department, type)
-    VALUES (?, ?, ?, ?)
-  `;
-  db.pool.query(query, [name, ipAddress, department, type], function(error) {
+  db.pool.query('CALL AddAsset(?, ?, ?, ?)', [name, ipAddress, department, type], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -607,12 +590,7 @@ app.get('/assets/:id/edit', (req, res) => {
 app.post('/assets/:id', (req, res) => {
   const assetId = req.params.id;
   const { name, ipAddress, department, type } = req.body;
-  const query = `
-    UPDATE Assets
-    SET name = ?, ipAddress = ?, department = ?, type = ?
-    WHERE assetID = ?
-  `;
-  db.pool.query(query, [name, ipAddress, department, type, assetId], function(error) {
+  db.pool.query('CALL UpdateAsset(?, ?, ?, ?, ?)', [assetId, name, ipAddress, department, type], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -624,8 +602,7 @@ app.post('/assets/:id', (req, res) => {
 
 app.post('/assets/:id/delete', (req, res) => {
   const assetId = req.params.id;
-  const query = "DELETE FROM Assets WHERE assetID = ?;";
-  db.pool.query(query, [assetId], function(error) {
+  db.pool.query('CALL DeleteAsset(?)', [assetId], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -659,11 +636,7 @@ app.get('/cves/add', (req, res) => {
 
 app.post('/cves', (req, res) => {
   const { cveCode, description, cvssScore, publishedDate } = req.body;
-  const query = `
-    INSERT INTO CVEs (cveCode, description, cvssScore, publishedDate)
-    VALUES (?, ?, ?, ?)
-  `;
-  db.pool.query(query, [cveCode, description, cvssScore, publishedDate], function(error) {
+  db.pool.query('CALL AddCVE(?, ?, ?, ?)', [cveCode, description, cvssScore, publishedDate], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -692,12 +665,7 @@ app.get('/cves/:id/edit', (req, res) => {
 app.post('/cves/:id', (req, res) => {
   const cveId = req.params.id;
   const { cveCode, description, cvssScore, publishedDate } = req.body;
-  const query = `
-    UPDATE CVEs
-    SET cveCode = ?, description = ?, cvssScore = ?, publishedDate = ?
-    WHERE cveID = ?
-  `;
-  db.pool.query(query, [cveCode, description, cvssScore, publishedDate, cveId], function(error) {
+  db.pool.query('CALL UpdateCVE(?, ?, ?, ?, ?)', [cveId, cveCode, description, cvssScore, publishedDate], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -709,8 +677,7 @@ app.post('/cves/:id', (req, res) => {
 
 app.post('/cves/:id/delete', (req, res) => {
   const cveId = req.params.id;
-  const query = "DELETE FROM CVEs WHERE cveID = ?;";
-  db.pool.query(query, [cveId], function(error) {
+  db.pool.query('CALL DeleteCVE(?)', [cveId], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -744,11 +711,7 @@ app.get('/severity-levels/add', (req, res) => {
 
 app.post('/severity-levels', (req, res) => {
   const { severityName, responseHours } = req.body;
-  const query = `
-    INSERT INTO Severity_Levels (severityName, responseHours)
-    VALUES (?, ?)
-  `;
-  db.pool.query(query, [severityName, responseHours], function(error) {
+  db.pool.query('CALL AddSeverityLevel(?, ?)', [severityName, responseHours], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -777,12 +740,7 @@ app.get('/severity-levels/:id/edit', (req, res) => {
 app.post('/severity-levels/:id', (req, res) => {
   const severityId = req.params.id;
   const { severityName, responseHours } = req.body;
-  const query = `
-    UPDATE Severity_Levels
-    SET severityName = ?, responseHours = ?
-    WHERE severityLevelID = ?
-  `;
-  db.pool.query(query, [severityName, responseHours, severityId], function(error) {
+  db.pool.query('CALL UpdateSeverityLevel(?, ?, ?)', [severityId, severityName, responseHours], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -794,9 +752,7 @@ app.post('/severity-levels/:id', (req, res) => {
 
 app.post('/severity-levels/:id/delete', (req, res) => {
   const severityId = req.params.id;
-  const query = "DELETE FROM Severity_Levels WHERE severityLevelID = ?;";
-  
-  db.pool.query(query, [severityId], function(error) {
+  db.pool.query('CALL DeleteSeverityLevel(?)', [severityId], function(error) {
     if (error) {
       console.log(error);
       if (error.errno === 1451 || error.code === 'ER_ROW_IS_REFERENCED_2') {
@@ -835,11 +791,7 @@ app.get('/statuses/add', (req, res) => {
 
 app.post('/statuses', (req, res) => {
   const { statusName } = req.body;
-  const query = `
-    INSERT INTO Statuses (statusName)
-    VALUES (?)
-  `;
-  db.pool.query(query, [statusName], function(error) {
+  db.pool.query('CALL AddStatus(?)', [statusName], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -868,12 +820,7 @@ app.get('/statuses/:id/edit', (req, res) => {
 app.post('/statuses/:id', (req, res) => {
   const statusId = req.params.id;
   const { statusName } = req.body;
-  const query = `
-    UPDATE Statuses
-    SET statusName = ?
-    WHERE statusID = ?
-  `;
-  db.pool.query(query, [statusName, statusId], function(error) {
+  db.pool.query('CALL UpdateStatus(?, ?)', [statusId, statusName], function(error) {
     if (error) {
       console.log(error);
       res.sendStatus(500);
@@ -885,9 +832,7 @@ app.post('/statuses/:id', (req, res) => {
 
 app.post('/statuses/:id/delete', (req, res) => {
   const statusId = req.params.id;
-
-  const query = "DELETE FROM Statuses WHERE statusID = ?;";
-  db.pool.query(query, [statusId], function(error) {
+  db.pool.query('CALL DeleteStatus(?)', [statusId], function(error) {
     if (error) {
       console.log(error);
       if (error.errno === 1451 || error.code === 'ER_ROW_IS_REFERENCED_2') {

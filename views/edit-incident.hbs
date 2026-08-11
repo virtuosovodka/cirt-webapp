@@ -15,7 +15,7 @@
 
     <div class="form-group">
         <label for="reportedAt">Reported At *</label>
-        <input type="datetime-local" id="reportedAt" name="reportedAt" value="{{incident.reportedAt}}" required>
+        <input type="datetime-local" id="reportedAt" name="reportedAt" value="{{formatDateTime incident.reportedAt}}" required>
     </div>
 
     <div class="form-group">
@@ -40,7 +40,7 @@
 
     <div class="form-group">
         <label for="closedAt">Closed At</label>
-        <input type="datetime-local" id="closedAt" name="closedAt" value="{{incident.closedAt}}">
+        <input type="datetime-local" id="closedAt" name="closedAt" value="{{formatDateTime incident.closedAt}}">
     </div>
 
     <div class="form-actions">
