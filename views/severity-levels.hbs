@@ -33,9 +33,7 @@
                         <td><strong>{{this.responseHours}} hours</strong></td>
                         <td>
                             <a href="/severity-levels/{{this.severityLevelID}}/edit" class="btn btn-secondary btn-small">Edit</a>
-                            <form method="POST" action="/severity-levels/{{this.severityLevelID}}/delete" style="display:inline;">
-                                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Are you sure?')">Delete</button>
-                            </form>
+                            <button type="button" class="btn btn-danger btn-small" onclick="deleteSeverity('{{this.severityLevelID}}')">Delete</button>
                         </td>
                     </tr>
                 {{/each}}
@@ -45,3 +43,31 @@
         <p class="empty-state">No severity levels found. <a href="/severity-levels/add">Add one now</a></p>
     {{/if}}
 </div>
+
+<script>
+async function deleteSeverity(severityId) {
+    if (!confirm('Are you sure you want to delete this severity level?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/severity-levels/${severityId}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            window.location.reload();
+        } else {
+            alert(result.message || "An error occurred while deleting.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Alert: Could not connect to the server.");
+    }
+}
+</script>

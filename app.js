@@ -795,12 +795,19 @@ app.post('/severity-levels/:id', (req, res) => {
 app.post('/severity-levels/:id/delete', (req, res) => {
   const severityId = req.params.id;
   const query = "DELETE FROM Severity_Levels WHERE severityLevelID = ?;";
+  
   db.pool.query(query, [severityId], function(error) {
     if (error) {
       console.log(error);
-      res.sendStatus(500);
+      if (error.errno === 1451 || error.code === 'ER_ROW_IS_REFERENCED_2') {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Alert: This severity level is referenced by existing incidents and cannot be deleted." 
+        });
+      }
+      return res.sendStatus(500);
     } else {
-      res.redirect('/severity-levels');
+      return res.json({ success: true });
     }
   });
 });
@@ -878,13 +885,20 @@ app.post('/statuses/:id', (req, res) => {
 
 app.post('/statuses/:id/delete', (req, res) => {
   const statusId = req.params.id;
+
   const query = "DELETE FROM Statuses WHERE statusID = ?;";
   db.pool.query(query, [statusId], function(error) {
     if (error) {
       console.log(error);
-      res.sendStatus(500);
+      if (error.errno === 1451 || error.code === 'ER_ROW_IS_REFERENCED_2') {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Alert: This record is referenced by existing incidents and cannot be deleted." 
+        });
+      }
+      return res.sendStatus(500);
     } else {
-      res.redirect('/statuses');
+      return res.json({ success: true });
     }
   });
 });

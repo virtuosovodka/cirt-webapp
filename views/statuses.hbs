@@ -31,9 +31,7 @@
                         <td><span class="status-badge status-{{this.statusName}}">{{this.statusName}}</span></td>
                         <td>
                             <a href="/statuses/{{this.statusID}}/edit" class="btn btn-secondary btn-small">Edit</a>
-                            <form method="POST" action="/statuses/{{this.statusID}}/delete" style="display:inline;">
-                                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Are you sure?')">Delete</button>
-                            </form>
+                            <button type="button" class="btn btn-danger btn-small" onclick="deleteStatus('{{this.statusID}}')">Delete</button>
                         </td>
                     </tr>
                 {{/each}}
@@ -43,3 +41,33 @@
         <p class="empty-state">No statuses found. <a href="/statuses/add">Add one now</a></p>
     {{/if}}
 </div>
+
+<script>
+async function deleteStatus(statusId) {
+    if (!confirm('Are you sure you want to delete this status?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/statuses/${statusId}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            // Successfully deleted, reload the page to update the table
+            window.location.reload();
+        } else {
+            // Trigger popup alert with the error message from the backend
+            alert(result.message || "An error occurred while deleting.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Alert: Could not connect to the server.");
+    }
+}
+</script>
