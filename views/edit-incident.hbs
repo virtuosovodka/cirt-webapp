@@ -23,7 +23,7 @@
         <select id="severityLevelID" name="severityLevelID" required>
             <option value="">-- Select Severity --</option>
             {{#each severities}}
-                <option value="{{this.severityLevelID}}" {{#if (eq this.severityLevelID incident.severityLevelID)}}selected{{/if}}>{{this.severityName}}</option>
+                <option value="{{this.severityLevelID}}" {{#if (eq this.severityLevelID ../incident.severityLevelID)}}selected{{/if}}>{{this.severityName}}</option>
             {{/each}}
         </select>
     </div>
@@ -33,7 +33,7 @@
         <select id="statusID" name="statusID" required>
             <option value="">-- Select Status --</option>
             {{#each statuses}}
-                <option value="{{this.statusID}}" {{#if (eq this.statusID incident.statusID)}}selected{{/if}}>{{this.statusName}}</option>
+                <option value="{{this.statusID}}" {{#if (eq this.statusID ../incident.statusID)}}selected{{/if}}>{{this.statusName}}</option>
             {{/each}}
         </select>
     </div>
