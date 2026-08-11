@@ -770,7 +770,7 @@ app.post('/severity-levels/:id/delete', (req, res) => {
 
 // STATUSES
 app.get('/statuses', (req, res) => {
-  const query = "SELECT * FROM Statuses;";
+  const query = "SELECT * FROM Statuses ORDER BY statusID ASC;";
   db.pool.query(query, function(error, rows, fields){
       if (error) {
           console.log(error);
