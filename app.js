@@ -12,7 +12,7 @@ app.engine('hbs', exphbs.engine({
     defaultLayout: 'layout',
     layoutsDir: path.join(__dirname, 'views/layouts'),
     helpers: {
-        eq: (a, b) => a === b,
+        eq: (a, b) => String(a) === String(b),
         formatDate: (date) => date ? new Date(date).toISOString().split('T')[0] : '',
         formatDateTime: (date) => date ? new Date(date).toISOString().slice(0, 16) : ''
     }
